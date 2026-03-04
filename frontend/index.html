@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="description" content="Sochau Share — peer-to-peer encrypted file transfer. No server. No storage." />
-  <title>Sochau Share — Encrypted P2P Transfer</title>
+  <title>Files Sharing — Sochau Share</title>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -67,30 +67,6 @@
         <span class="status-bar__text" id="status-text">Initialising…</span>
         <span class="status-bar__peer" id="peer-info"></span>
       </div>
-
-      <!-- Capacity picker (shown only before connecting) -->
-      <div class="capacity-picker" id="capacity-picker" hidden>
-        <span class="capacity-picker__label">Room size</span>
-        <div class="capacity-picker__btns">
-          <button class="cap-btn cap-btn--active" data-cap="2">
-            <span class="cap-btn__num">2</span>
-            <span class="cap-btn__sub">peers</span>
-          </button>
-          <button class="cap-btn" data-cap="3">
-            <span class="cap-btn__num">3</span>
-            <span class="cap-btn__sub">peers</span>
-          </button>
-          <button class="cap-btn" data-cap="4">
-            <span class="cap-btn__num">4</span>
-            <span class="cap-btn__sub">peers</span>
-          </button>
-        </div>
-        <button class="connect-btn" id="connect-btn">Connect to Room</button>
-        <p class="capacity-picker__note">First person to join sets the room size. Share the URL with your peers.</p>
-      </div>
-
-      <!-- Peer mesh visualiser -->
-      <div class="peer-list" id="peer-list" aria-label="Connected peers"></div>
 
       <!-- Error banner (hidden by default) -->
       <div class="error-banner" id="error-banner" role="alert" hidden>
@@ -168,7 +144,7 @@
 
     <footer class="footer">
       <span>Peer-to-peer · No relay · No storage ·</span>
-      <a href="https://share.sochau.cloud" class="footer__link">share.sochau.cloud</a>
+      <a href="https://sudipdahal1.com.np" class="footer__link" target="_blank" rel="noopener noreferrer">© Sudip Dahal</a>
     </footer>
 
   </main>

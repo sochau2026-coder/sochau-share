@@ -4,19 +4,19 @@ export const Whiteboard = (() => {
 
   // ── State ─────────────────────────────────────────────────
   let canvas, ctx, wrap;
-  let tool     = 'pen';
-  let color    = '#e2e8f0';
+  let tool = 'pen';
+  let color = '#e2e8f0';
   let brushSize = 2;
-  let drawing  = false;
-  let startX   = 0, startY = 0;
-  let lastX    = 0, lastY  = 0;
+  let drawing = false;
+  let startX = 0, startY = 0;
+  let lastX = 0, lastY = 0;
   let snapshot = null;
 
-  const history  = [];
+  const history = [];
   const MAX_HIST = 40;
-  const peers    = new Map();
-  const COLORS   = ['#f97316','#00d4ff','#a78bfa','#4ade80','#fb7185','#fbbf24'];
-  let colorIdx   = 0;
+  const peers = new Map();   // Map<peerId, { col, dot, leg, path: {lastX,lastY,drawing} }>
+  const COLORS = ['#f97316', '#00d4ff', '#a78bfa', '#4ade80', '#fb7185', '#fbbf24'];
+  let colorIdx = 0;
 
   // ── broadcastFn: simple module-level variable ─────────────
   // app.js sets:  Whiteboard.broadcastFn = fn
@@ -27,14 +27,14 @@ export const Whiteboard = (() => {
     if (typeof _broadcastFn !== 'function') return;
     try {
       _broadcastFn(JSON.stringify({ _wb: true, ...obj }));
-    } catch(e) {
+    } catch (e) {
       console.warn('[wb] broadcast error:', e);
     }
   }
 
   // ── Init ──────────────────────────────────────────────────
   function init() {
-    wrap   = document.getElementById('wb-canvas-wrap');
+    wrap = document.getElementById('wb-canvas-wrap');
     canvas = document.getElementById('wb-canvas');
     if (!canvas) { console.error('[wb] canvas not found'); return; }
     ctx = canvas.getContext('2d');
@@ -48,7 +48,7 @@ export const Whiteboard = (() => {
   function resize() {
     if (!canvas || !wrap) return;
     const snapshot_data = canvas.width > 0 && canvas.height > 0 ? canvas.toDataURL() : null;
-    canvas.width  = wrap.clientWidth;
+    canvas.width = wrap.clientWidth;
     canvas.height = wrap.clientHeight;
     _resetCtx();
     if (snapshot_data) {
@@ -59,12 +59,12 @@ export const Whiteboard = (() => {
   }
 
   function _resetCtx() {
-    ctx.lineCap   = 'round';
-    ctx.lineJoin  = 'round';
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
     ctx.globalCompositeOperation = 'source-over';
     ctx.strokeStyle = color;
-    ctx.fillStyle   = color;
-    ctx.lineWidth   = brushSize;
+    ctx.fillStyle = color;
+    ctx.lineWidth = brushSize;
   }
 
   // ── Toolbar ───────────────────────────────────────────────
@@ -111,7 +111,7 @@ export const Whiteboard = (() => {
     document.addEventListener('keydown', e => {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
       if (!document.getElementById('panel-whiteboard')?.classList.contains('active')) return;
-      const map = { p:'pen', e:'eraser', t:'text', r:'rect', c:'circle' };
+      const map = { p: 'pen', e: 'eraser', t: 'text', r: 'rect', c: 'circle' };
       if (map[e.key]) document.querySelector(`.wb-tool[data-tool="${map[e.key]}"]`)?.click();
       if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); _undo(); }
     });
@@ -119,18 +119,18 @@ export const Whiteboard = (() => {
 
   // ── Canvas events ─────────────────────────────────────────
   function _bindCanvas() {
-    canvas.addEventListener('pointerdown',  _onDown);
-    canvas.addEventListener('pointermove',  _onMove);
-    canvas.addEventListener('pointerup',    _onUp);
+    canvas.addEventListener('pointerdown', _onDown);
+    canvas.addEventListener('pointermove', _onMove);
+    canvas.addEventListener('pointerup', _onUp);
     canvas.addEventListener('pointerleave', _onLeave);
-    canvas.addEventListener('click',        _onClick);
+    canvas.addEventListener('click', _onClick);
   }
 
   function _pos(e) {
     const r = canvas.getBoundingClientRect();
     return {
-      x: (e.clientX - r.left) * (canvas.width  / r.width),
-      y: (e.clientY - r.top)  * (canvas.height / r.height),
+      x: (e.clientX - r.left) * (canvas.width / r.width),
+      y: (e.clientY - r.top) * (canvas.height / r.height),
     };
   }
 
@@ -167,8 +167,8 @@ export const Whiteboard = (() => {
         size: brushSize,
         fromX: lastX / canvas.width,
         fromY: lastY / canvas.height,
-        toX:   x     / canvas.width,
-        toY:   y     / canvas.height,
+        toX: x / canvas.width,
+        toY: y / canvas.height,
       });
       lastX = x; lastY = y;
     } else if (snapshot) {
@@ -193,8 +193,8 @@ export const Whiteboard = (() => {
       const { x, y } = _pos(e);
       _broadcast({
         type: 'shape', tool, color, size: brushSize,
-        x1: startX / canvas.width,  y1: startY / canvas.height,
-        x2: x      / canvas.width,  y2: y      / canvas.height,
+        x1: startX / canvas.width, y1: startY / canvas.height,
+        x2: x / canvas.width, y2: y / canvas.height,
       });
       snapshot = null;
     }
@@ -213,27 +213,27 @@ export const Whiteboard = (() => {
     if (tool === 'eraser') {
       ctx.globalCompositeOperation = 'destination-out';
       ctx.strokeStyle = 'rgba(0,0,0,1)';
-      ctx.lineWidth   = brushSize * 4;
+      ctx.lineWidth = brushSize * 4;
     } else {
       ctx.globalCompositeOperation = 'source-over';
       ctx.strokeStyle = color;
-      ctx.lineWidth   = brushSize;
+      ctx.lineWidth = brushSize;
     }
-    ctx.lineCap  = 'round';
+    ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
   }
 
   function _drawShape(shapeTool, x1, y1, x2, y2, col, sw) {
     ctx.globalCompositeOperation = 'source-over';
     ctx.strokeStyle = col;
-    ctx.lineWidth   = sw;
-    ctx.lineCap     = 'round';
+    ctx.lineWidth = sw;
+    ctx.lineCap = 'round';
     ctx.beginPath();
     if (shapeTool === 'rect') {
       ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
     } else if (shapeTool === 'circle') {
       const cx = (x1 + x2) / 2, cy = (y1 + y2) / 2;
-      ctx.ellipse(cx, cy, Math.abs(x2-x1)/2, Math.abs(y2-y1)/2, 0, 0, Math.PI * 2);
+      ctx.ellipse(cx, cy, Math.abs(x2 - x1) / 2, Math.abs(y2 - y1) / 2, 0, 0, Math.PI * 2);
       ctx.stroke();
     }
     ctx.closePath();
@@ -242,7 +242,7 @@ export const Whiteboard = (() => {
   function _drawText(text, x, y, col, fontSize) {
     ctx.globalCompositeOperation = 'source-over';
     ctx.fillStyle = col;
-    ctx.font      = `${fontSize}px Sora, sans-serif`;
+    ctx.font = `${fontSize}px Sora, sans-serif`;
     ctx.fillText(text, x, y + fontSize);
   }
 
@@ -253,12 +253,12 @@ export const Whiteboard = (() => {
   // ── Text input ────────────────────────────────────────────
   function _showTextInput(x, y) {
     const wrapEl = document.getElementById('wb-text-input-wrap');
-    const ta     = document.getElementById('wb-text-input');
+    const ta = document.getElementById('wb-text-input');
     wrapEl.style.left = x + 'px';
-    wrapEl.style.top  = y + 'px';
+    wrapEl.style.top = y + 'px';
     wrapEl.hidden = false;
-    ta.value          = '';
-    ta.style.color    = color;
+    ta.value = '';
+    ta.style.color = color;
     ta.style.fontSize = Math.max(14, brushSize * 4) + 'px';
     ta.focus();
 
@@ -281,7 +281,7 @@ export const Whiteboard = (() => {
       }
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); commit(); }
     };
-    ta.addEventListener('blur',    commit, { once: true });
+    ta.addEventListener('blur', commit, { once: true });
     ta.addEventListener('keydown', onKey);
   }
 
@@ -299,7 +299,7 @@ export const Whiteboard = (() => {
   }
 
   // ── Peer cursors ──────────────────────────────────────────
-  function addPeer(peerId) {
+  function addPeer(peerId, sendFn) {
     if (peers.has(peerId)) return;
     const col = COLORS[colorIdx++ % COLORS.length];
     const dot = document.createElement('div');
@@ -307,9 +307,10 @@ export const Whiteboard = (() => {
     wrap?.appendChild(dot);
     const leg = document.createElement('div');
     leg.className = 'wb-peer-cursor';
-    leg.innerHTML = `<span class="wb-peer-cursor__dot" style="background:${col}"></span><span>${peerId.slice(0,4)}</span>`;
+    leg.innerHTML = `<span class="wb-peer-cursor__dot" style="background:${col}"></span><span>${peerId.slice(0, 4)}</span>`;
     document.getElementById('wb-peers')?.appendChild(leg);
-    peers.set(peerId, { col, dot, leg });
+    // sendFn: direct-send to only this peer (for targeted sync-state reply)
+    peers.set(peerId, { col, dot, leg, sendFn: sendFn || null, path: { drawing: false, lastX: 0, lastY: 0 } });
     console.log('[wb] peer added:', peerId);
   }
 
@@ -325,8 +326,8 @@ export const Whiteboard = (() => {
     const p = peers.get(peerId);
     if (!p || !wrap) return;
     p.dot.style.display = 'block';
-    p.dot.style.left = (nx * wrap.clientWidth)  + 'px';
-    p.dot.style.top  = (ny * wrap.clientHeight) + 'px';
+    p.dot.style.left = (nx * wrap.clientWidth) + 'px';
+    p.dot.style.top = (ny * wrap.clientHeight) + 'px';
   }
 
   // ── Handle incoming peer messages ─────────────────────────
@@ -345,38 +346,44 @@ export const Whiteboard = (() => {
         break;
 
       case 'draw': {
-        const x1 = msg.fromX * canvas.width,  y1 = msg.fromY * canvas.height;
-        const x2 = msg.toX   * canvas.width,  y2 = msg.toY   * canvas.height;
+        // Save ctx so remote draw does NOT clobber local drawing state
+        ctx.save();
+        const x1 = msg.fromX * canvas.width, y1 = msg.fromY * canvas.height;
+        const x2 = msg.toX * canvas.width, y2 = msg.toY * canvas.height;
         if (msg.tool === 'eraser') {
           ctx.globalCompositeOperation = 'destination-out';
           ctx.strokeStyle = 'rgba(0,0,0,1)';
-          ctx.lineWidth   = msg.size * 4;
+          ctx.lineWidth = msg.size * 4;
         } else {
           ctx.globalCompositeOperation = 'source-over';
           ctx.strokeStyle = msg.color;
-          ctx.lineWidth   = msg.size;
+          ctx.lineWidth = msg.size;
         }
-        ctx.lineCap  = 'round';
+        ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
         ctx.stroke();
-        _resetCtx();
+        ctx.restore(); // Restore local user's drawing state
         break;
       }
 
       case 'shape':
+        ctx.save();
         _drawShape(msg.tool,
-          msg.x1 * canvas.width,  msg.y1 * canvas.height,
-          msg.x2 * canvas.width,  msg.y2 * canvas.height,
+          msg.x1 * canvas.width, msg.y1 * canvas.height,
+          msg.x2 * canvas.width, msg.y2 * canvas.height,
           msg.color, msg.size);
+        ctx.restore();
         break;
 
       case 'text':
+        ctx.save();
         _drawText(msg.text,
           msg.x * canvas.width, msg.y * canvas.height,
           msg.color, msg.fontSize);
+        ctx.restore();
         break;
 
       case 'clear':
@@ -390,11 +397,20 @@ export const Whiteboard = (() => {
         break;
       }
 
-      case 'sync-request':
-        // Peer joined and wants the current board state
+      case 'sync-request': {
+        // Send the board state ONLY back to the requesting peer (not broadcast to all)
         console.log('[wb] sync-request from', peerId);
-        _broadcast({ type: 'sync-state', data: canvas.toDataURL() });
+        const peer = peers.get(peerId);
+        const syncPayload = JSON.stringify({ _wb: true, type: 'sync-state', data: canvas.toDataURL() });
+        if (peer?.sendFn) {
+          // Direct send to requesting peer only
+          try { peer.sendFn(syncPayload); } catch (e) { console.warn('[wb] sync-state direct send failed:', e); }
+        } else {
+          // Fallback: broadcast (old behavior, works with 2 peers)
+          _broadcast({ type: 'sync-state', data: canvas.toDataURL() });
+        }
         break;
+      }
 
       case 'sync-state': {
         console.log('[wb] sync-state received');
@@ -419,8 +435,8 @@ export const Whiteboard = (() => {
     requestSync,
     addPeer,
     removePeer,
-    get broadcastFn()    { return _broadcastFn; },
-    set broadcastFn(fn)  { _broadcastFn = fn; console.log('[wb] broadcastFn set:', typeof fn); },
+    get broadcastFn() { return _broadcastFn; },
+    set broadcastFn(fn) { _broadcastFn = fn; console.log('[wb] broadcastFn set:', typeof fn); },
   };
 
 })();

@@ -10,17 +10,17 @@ const Config = Object.freeze({
     if (window.location.port === '5173') return 'http://localhost:3000';
     return window.location.origin;
   })(),
-  CHUNK_SIZE:       64 * 1024,
+  CHUNK_SIZE: 64 * 1024,
   BUFFER_THRESHOLD: 8 * 1024 * 1024,
   ICE: [
     // STUN — free, fast; works when both peers have open/simple NAT
-    { urls: 'stun:stun.l.google.com:19302'  },
+    { urls: 'stun:stun.l.google.com:19302' },
     { urls: 'stun:stun1.l.google.com:19302' },
     { urls: 'stun:stun.cloudflare.com:3478' },
     // TURN relay — required when peers are behind symmetric NAT (most home/mobile ISPs)
     // Uses OpenRelay (metered.ca) public TURN — no server setup needed
-    { urls: 'turn:openrelay.metered.ca:80',             username: 'openrelayproject', credential: 'openrelayproject' },
-    { urls: 'turn:openrelay.metered.ca:443',            username: 'openrelayproject', credential: 'openrelayproject' },
+    { urls: 'turn:openrelay.metered.ca:80', username: 'openrelayproject', credential: 'openrelayproject' },
+    { urls: 'turn:openrelay.metered.ca:443', username: 'openrelayproject', credential: 'openrelayproject' },
     { urls: 'turn:openrelay.metered.ca:443?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' },
   ],
 });
@@ -30,14 +30,14 @@ const Config = Object.freeze({
    STATE
 ════════════════════════════════════════ */
 const State = {
-  roomId:    null,
-  capacity:  2,
-  myId:      null,
-  socket:    null,
+  roomId: null,
+  capacity: 2,
+  myId: null,
+  socket: null,
   isCreator: false,
-  peers:     new Map(),   // Map<peerId, { pc, dc }>
-  outQueue:  [],
-  inbound:   new Map(),
+  peers: new Map(),   // Map<peerId, { pc, dc }>
+  outQueue: [],
+  inbound: new Map(),
   activeSends: new Map(),
 
   get openPeerIds() {
@@ -56,7 +56,7 @@ function wbBroadcast(data) {
   let sent = 0;
   State.peers.forEach((entry, pid) => {
     const dc = entry.dc;
-    if (dc && dc.readyState === 'open') { try { dc.send(data); sent++; } catch(e) { console.warn('[wb send err]', pid, e); } }
+    if (dc && dc.readyState === 'open') { try { dc.send(data); sent++; } catch (e) { console.warn('[wb send err]', pid, e); } }
   });
 }
 
@@ -65,7 +65,7 @@ function wbBroadcast(data) {
 ════════════════════════════════════════ */
 const Router = {
   init() {
-    const parts  = window.location.pathname.split('/').filter(Boolean);
+    const parts = window.location.pathname.split('/').filter(Boolean);
     const roomId = parts[0];
     if (roomId && /^[a-zA-Z0-9]{6,64}$/.test(roomId)) {
       Router.goToDashboard(roomId, false, 2);
@@ -84,9 +84,9 @@ const Router = {
   },
 
   goToDashboard(roomId, isCreator, capacity) {
-    State.roomId    = roomId;
+    State.roomId = roomId;
     State.isCreator = isCreator;
-    State.capacity  = capacity;
+    State.capacity = capacity;
     document.getElementById('page-landing').classList.remove('active');
     document.getElementById('page-dashboard').classList.add('active');
     const url = '/' + roomId;
@@ -137,7 +137,7 @@ const DashUI = {
   hideError() { document.getElementById('dash-error').hidden = true; },
 
   updatePeers() {
-    const el   = document.getElementById('peer-list');
+    const el = document.getElementById('peer-list');
     const open = State.openPeerIds.length;
     el.innerHTML = '';
     for (let i = 0; i < State.capacity; i++) {
@@ -156,7 +156,7 @@ const DashUI = {
 ════════════════════════════════════════ */
 const FilesUI = {
   setSendEnabled(on) { document.getElementById('send-btn').disabled = !on; },
-  setSendLabel(t)    { document.getElementById('send-label').textContent = t; },
+  setSendLabel(t) { document.getElementById('send-label').textContent = t; },
 
   updateCount(n) {
     document.getElementById('queue-count').textContent = n + (n === 1 ? ' file' : ' files');
@@ -165,11 +165,11 @@ const FilesUI = {
   },
 
   addCard({ id, name, size, dir, peerId }) {
-    const li  = document.createElement('li');
-    li.className      = 'file-item';
+    const li = document.createElement('li');
+    li.className = 'file-item';
     li.dataset.fileId = id;
-    li.dataset.state  = 'queued';
-    const lbl = dir === 'out' ? 'Queued' : `Incoming${peerId ? ' · ' + peerId.slice(0,4) : ''}`;
+    li.dataset.state = 'queued';
+    const lbl = dir === 'out' ? 'Queued' : `Incoming${peerId ? ' · ' + peerId.slice(0, 4) : ''}`;
     li.innerHTML = `
       <div class="file-item__icon">${FU.icon(name)}</div>
       <div class="file-item__meta">
@@ -200,9 +200,9 @@ const FilesUI = {
       if (pEl) pEl.textContent = state === 'error' ? 'Error' : 'Cancelled';
       if (sEl) sEl.textContent = '';
     } else {
-      if (pct   != null && bar) bar.style.width   = pct + '%';
-      if (pct   != null && pEl) pEl.textContent   = Math.round(pct) + '%';
-      if (speed != null && sEl) sEl.textContent   = FU.speed(speed);
+      if (pct != null && bar) bar.style.width = pct + '%';
+      if (pct != null && pEl) pEl.textContent = Math.round(pct) + '%';
+      if (speed != null && sEl) sEl.textContent = FU.speed(speed);
     }
   },
 
@@ -218,16 +218,16 @@ const FilesUI = {
 const FU = {
   size(b) {
     if (!b) return '0 B';
-    const u = ['B','KB','MB','GB','TB'];
+    const u = ['B', 'KB', 'MB', 'GB', 'TB'];
     const i = Math.floor(Math.log(b) / Math.log(1024));
     return `${(b / 1024 ** i).toFixed(i ? 1 : 0)} ${u[i]}`;
   },
-  speed(b)  { return FU.size(b) + '/s'; },
-  id()      { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); },
-  esc(s)    { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); },
+  speed(b) { return FU.size(b) + '/s'; },
+  id() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); },
+  esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); },
   icon(name) {
-    const ext = (name.split('.').pop()||'').toLowerCase();
-    if (['jpg','jpeg','png','gif','webp','svg','avif'].includes(ext))
+    const ext = (name.split('.').pop() || '').toLowerCase();
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'avif'].includes(ext))
       return `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="14" height="12" rx="2" stroke="currentColor" stroke-width="1.2"/><circle cx="5.5" cy="6" r="1" fill="currentColor"/><path d="M1 11l3.5-3.5L8 11l3-2.5L15 11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
     return `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="1" width="9" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 1l4 3.5H7.5V1Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M4 8h5M4 10.5h5M4 5.5h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>`;
   },
@@ -244,7 +244,7 @@ const Signaling = {
     s.on('connect', () => s.emit('join-room', { roomId, capacity }));
 
     s.on('joined', ({ socketId, capacity: cap, existingPeers }) => {
-      State.myId     = socketId;
+      State.myId = socketId;
       State.capacity = cap;
       DashUI.updatePeers();
 
@@ -257,19 +257,19 @@ const Signaling = {
       }
     });
 
-    s.on('peer-joined',   ({ socketId })           => Mesh.initPeer(socketId, true));
-    s.on('offer',         ({ senderId, sdp })       => Mesh.handleOffer(senderId, sdp));
-    s.on('answer',        ({ senderId, sdp })       => Mesh.handleAnswer(senderId, sdp));
+    s.on('peer-joined', ({ socketId }) => Mesh.initPeer(socketId, true));
+    s.on('offer', ({ senderId, sdp }) => Mesh.handleOffer(senderId, sdp));
+    s.on('answer', ({ senderId, sdp }) => Mesh.handleAnswer(senderId, sdp));
     s.on('ice-candidate', ({ senderId, candidate }) => Mesh.handleIce(senderId, candidate));
-    s.on('peer-left',     ({ socketId })            => Mesh.peerLeft(socketId));
-    s.on('error',         ({ message })             => { DashUI.showError(message); DashUI.setConn('error', 'Error'); });
-    s.on('disconnect',    ()                        => DashUI.setConn('error', 'Disconnected'));
-    s.on('connect_error', ()                        => { DashUI.setConn('error', 'No server'); DashUI.showError('Cannot connect to signaling server.'); });
+    s.on('peer-left', ({ socketId }) => Mesh.peerLeft(socketId));
+    s.on('error', ({ message }) => { DashUI.showError(message); DashUI.setConn('error', 'Error'); });
+    s.on('disconnect', () => DashUI.setConn('error', 'Disconnected'));
+    s.on('connect_error', () => { DashUI.setConn('error', 'No server'); DashUI.showError('Cannot connect to signaling server.'); });
   },
 
-  offer(t, sdp)  { State.socket?.emit('offer',         { targetId: t, sdp }); },
-  answer(t, sdp) { State.socket?.emit('answer',        { targetId: t, sdp }); },
-  ice(t, c)      { State.socket?.emit('ice-candidate', { targetId: t, candidate: c }); },
+  offer(t, sdp) { State.socket?.emit('offer', { targetId: t, sdp }); },
+  answer(t, sdp) { State.socket?.emit('answer', { targetId: t, sdp }); },
+  ice(t, c) { State.socket?.emit('ice-candidate', { targetId: t, candidate: c }); },
 };
 
 /* ════════════════════════════════════════
@@ -278,15 +278,15 @@ const Signaling = {
 const Mesh = {
   initPeer(peerId, initiator) {
     if (State.peers.has(peerId)) State.peers.get(peerId).pc?.close();
-    const pc    = new RTCPeerConnection({ iceServers: Config.ICE });
+    const pc = new RTCPeerConnection({ iceServers: Config.ICE });
     const entry = { pc, dc: null };
     State.peers.set(peerId, entry);
 
     pc.onicecandidate = ({ candidate }) => { if (candidate) Signaling.ice(peerId, candidate); };
     pc.onconnectionstatechange = () => {
-      if (pc.connectionState === 'connected')    Mesh._peerUp(peerId);
+      if (pc.connectionState === 'connected') Mesh._peerUp(peerId);
       if (pc.connectionState === 'failed' ||
-          pc.connectionState === 'disconnected') Mesh.peerLeft(peerId);
+        pc.connectionState === 'disconnected') Mesh.peerLeft(peerId);
     };
     pc.ondatachannel = ({ channel }) => {
       entry.dc = channel;
@@ -307,9 +307,9 @@ const Mesh = {
   _setupDC(peerId, dc) {
     dc.binaryType = 'arraybuffer';
     dc.bufferedAmountLowThreshold = Config.BUFFER_THRESHOLD / 2;
-    dc.onopen    = () => Mesh._dcOpen(peerId);
-    dc.onclose   = () => Mesh.peerLeft(peerId);
-    dc.onerror   = e  => console.error('[dc error]', e);
+    dc.onopen = () => Mesh._dcOpen(peerId);
+    dc.onclose = () => Mesh.peerLeft(peerId);
+    dc.onerror = e => console.error('[dc error]', e);
     dc.onmessage = ({ data }) => Receiver.handle(peerId, data);
     dc.onbufferedamountlow = () => Sender.drained(peerId);
   },
@@ -317,12 +317,18 @@ const Mesh = {
   _dcOpen(peerId) {
     // ── KEY FIX: assign broadcastFn as plain property ──────
     Whiteboard.broadcastFn = wbBroadcast;
-    Whiteboard.addPeer(peerId);
+    // Pass a direct send fn so sync-state can be answered only to the requester
+    const entry = State.peers.get(peerId);
+    const directSend = (data) => {
+      const dc = entry?.dc;
+      if (dc?.readyState === 'open') dc.send(data);
+    };
+    Whiteboard.addPeer(peerId, directSend);
     Mesh._peerUp(peerId);
   },
 
   _peerUp(peerId) {
-    const n      = State.openPeerIds.length;
+    const n = State.openPeerIds.length;
     const needed = State.capacity - 1;
     DashUI.updatePeers();
     DashUI.setConn(
@@ -382,7 +388,7 @@ const Sender = {
   },
 
   async _sendFile(file, fileId, pids) {
-    const total  = Math.ceil(file.size / Config.CHUNK_SIZE);
+    const total = Math.ceil(file.size / Config.CHUNK_SIZE);
     const cancel = { cancelled: false };
     pids.forEach(p => State.activeSends.set(p, cancel));
     document.querySelector(`[data-file-id="${fileId}"] [data-role="cancel"]`)
@@ -395,23 +401,23 @@ const Sender = {
   },
 
   async _toPeer(file, fileId, total, pid, dc, cancel) {
-    dc.send(JSON.stringify({ type:'meta', fileId, name:file.name, size:file.size, total }));
-    FilesUI.updateCard(fileId, { state:'sending', pct:0 });
+    dc.send(JSON.stringify({ type: 'meta', fileId, name: file.name, size: file.size, total }));
+    FilesUI.updateCard(fileId, { state: 'sending', pct: 0 });
     let offset = 0, chunk = 0, sent = 0;
     const t0 = Date.now();
     while (offset < file.size) {
-      if (cancel.cancelled) { dc.send(JSON.stringify({ type:'cancel', fileId })); FilesUI.updateCard(fileId, { state:'cancelled' }); return; }
+      if (cancel.cancelled) { dc.send(JSON.stringify({ type: 'cancel', fileId })); FilesUI.updateCard(fileId, { state: 'cancelled' }); return; }
       if (dc.bufferedAmount > Config.BUFFER_THRESHOLD) await new Promise(r => Sender._drains.set(pid, r));
       const buf = await file.slice(offset, offset + Config.CHUNK_SIZE).arrayBuffer();
-      dc.send(JSON.stringify({ type:'chunk', fileId, index:chunk }));
+      dc.send(JSON.stringify({ type: 'chunk', fileId, index: chunk }));
       dc.send(buf);
       offset += buf.byteLength; sent += buf.byteLength; chunk++;
       const secs = (Date.now() - t0) / 1000 || .001;
       FilesUI.updateCard(fileId, { pct: (offset / file.size) * 100, speed: sent / secs });
       if (chunk % 4 === 0) await new Promise(r => setTimeout(r, 0));
     }
-    dc.send(JSON.stringify({ type:'done', fileId }));
-    FilesUI.updateCard(fileId, { state:'done' });
+    dc.send(JSON.stringify({ type: 'done', fileId }));
+    FilesUI.updateCard(fileId, { state: 'done' });
   },
 
   drained(pid) { const r = Sender._drains.get(pid); if (r) { Sender._drains.delete(pid); r(); } },
@@ -438,9 +444,9 @@ const Receiver = {
 
       // File protocol
       switch (msg.type) {
-        case 'meta':   Receiver._meta(peerId, msg);          break;
-        case 'chunk':  Receiver._pending.set(peerId, msg);   break;
-        case 'done':   Receiver._done(peerId, msg.fileId);   break;
+        case 'meta': Receiver._meta(peerId, msg); break;
+        case 'chunk': Receiver._pending.set(peerId, msg); break;
+        case 'done': Receiver._done(peerId, msg.fileId); break;
         case 'cancel': Receiver._cancel(peerId, msg.fileId); break;
       }
 
@@ -455,7 +461,7 @@ const Receiver = {
     const k = Receiver._key(pid, fileId);
     State.inbound.set(k, { name, size, total, chunks: new Array(total), received: 0, t0: Date.now(), bytesIn: 0 });
     FilesUI.addCard({ id: k, name, size, dir: 'in', peerId: pid });
-    FilesUI.updateCard(k, { state:'receiving', pct:0 });
+    FilesUI.updateCard(k, { state: 'receiving', pct: 0 });
     FilesUI.updateCount(State.inbound.size);
     Tabs.go('files');
   },
@@ -477,7 +483,7 @@ const Receiver = {
     const k = Receiver._key(pid, fileId);
     const e = State.inbound.get(k);
     if (!e) return;
-    FilesUI.updateCard(k, { state:'done' });
+    FilesUI.updateCard(k, { state: 'done' });
     const url = URL.createObjectURL(new Blob(e.chunks));
     Object.assign(document.createElement('a'), { href: url, download: e.name }).click();
     setTimeout(() => URL.revokeObjectURL(url), 10_000);
@@ -486,7 +492,7 @@ const Receiver = {
 
   _cancel(pid, fileId) {
     const k = Receiver._key(pid, fileId);
-    FilesUI.updateCard(k, { state:'cancelled' });
+    FilesUI.updateCard(k, { state: 'cancelled' });
     State.inbound.delete(k);
     DashUI.showError('Sender cancelled the transfer.');
   },
@@ -497,17 +503,17 @@ const Receiver = {
 ════════════════════════════════════════ */
 const Landing = {
   _cap: 2,
-  ADJ: ['aurora','cosmic','silent','swift','bright','silver','golden','crystal','lunar','solar','neon','sonic','arctic','ember','frost','jade','nova','onyx','prism','storm'],
-  NON: ['wave','spark','drift','bloom','pulse','forge','vault','orbit','crest','flash','mist','arc'],
+  ADJ: ['aurora', 'cosmic', 'silent', 'swift', 'bright', 'silver', 'golden', 'crystal', 'lunar', 'solar', 'neon', 'sonic', 'arctic', 'ember', 'frost', 'jade', 'nova', 'onyx', 'prism', 'storm'],
+  NON: ['wave', 'spark', 'drift', 'bloom', 'pulse', 'forge', 'vault', 'orbit', 'crest', 'flash', 'mist', 'arc'],
 
   genName() {
     return this.ADJ[Math.floor(Math.random() * this.ADJ.length)] + Math.floor(100 + Math.random() * 900);
   },
 
   init() {
-    const cIn  = document.getElementById('create-room-input');
+    const cIn = document.getElementById('create-room-input');
     const cHnt = document.getElementById('create-hint');
-    const jIn  = document.getElementById('join-room-input');
+    const jIn = document.getElementById('join-room-input');
     const jHnt = document.getElementById('join-hint');
 
     cIn.value = Landing.genName();
@@ -595,12 +601,12 @@ const App = {
   _wireFiles() {
     const dz = document.getElementById('dropzone');
     dz.addEventListener('dragenter', e => { e.preventDefault(); dz.classList.add('drag-over'); });
-    dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('drag-over'); });
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
     dz.addEventListener('dragleave', e => { if (!dz.contains(e.relatedTarget)) dz.classList.remove('drag-over'); });
     dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag-over'); App._dropItems(e.dataTransfer.items); });
     dz.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); document.getElementById('file-input').click(); } });
-    document.getElementById('file-input')?.addEventListener('change',   e => { App._addFiles([...e.target.files]); e.target.value=''; });
-    document.getElementById('folder-input')?.addEventListener('change', e => { App._addFiles([...e.target.files]); e.target.value=''; });
+    document.getElementById('file-input')?.addEventListener('change', e => { App._addFiles([...e.target.files]); e.target.value = ''; });
+    document.getElementById('folder-input')?.addEventListener('change', e => { App._addFiles([...e.target.files]); e.target.value = ''; });
     document.getElementById('send-btn')?.addEventListener('click', () => Sender.sendAll());
     document.getElementById('clear-btn')?.addEventListener('click', () => {
       State.activeSends.forEach(h => h.cancelled = true);
@@ -612,11 +618,11 @@ const App = {
 
   async _dropItems(items) {
     const files = [];
-    const walk  = async entry => {
-      if (entry.isFile) files.push(await new Promise((res,rej) => entry.file(res,rej)));
+    const walk = async entry => {
+      if (entry.isFile) files.push(await new Promise((res, rej) => entry.file(res, rej)));
       else if (entry.isDirectory) {
         const r = entry.createReader();
-        const read = () => new Promise((res,rej) => r.readEntries(res,rej));
+        const read = () => new Promise((res, rej) => r.readEntries(res, rej));
         let batch;
         do { batch = await read(); for (const c of batch) await walk(c); } while (batch.length);
       }
@@ -627,7 +633,7 @@ const App = {
 
   _addFiles(files) {
     if (!files.length) return;
-    files.forEach(f => { const id = FU.id(); State.outQueue.push({ file:f, id }); FilesUI.addCard({ id, name:f.name, size:f.size, dir:'out' }); });
+    files.forEach(f => { const id = FU.id(); State.outQueue.push({ file: f, id }); FilesUI.addCard({ id, name: f.name, size: f.size, dir: 'out' }); });
     FilesUI.updateCount(State.outQueue.length);
     FilesUI.setSendEnabled(State.openPeerIds.length > 0);
   },

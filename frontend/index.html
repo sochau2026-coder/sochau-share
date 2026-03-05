@@ -304,29 +304,29 @@
       <div class="dash-panel active" id="panel-whiteboard" role="tabpanel">
         <div class="wb-toolbar" id="wb-toolbar">
           <div class="wb-tool-group">
-            <button class="wb-tool active" data-tool="pen" title="Pen (P)">
+            <button type="button" class="wb-tool active" data-tool="pen" title="Pen (P)">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M11 2l3 3-8 8H3v-3l8-8Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
                 <path d="M9.5 3.5l3 3" stroke="currentColor" stroke-width="1.3" />
               </svg>
             </button>
-            <button class="wb-tool" data-tool="eraser" title="Eraser (E)">
+            <button type="button" class="wb-tool" data-tool="eraser" title="Eraser (E)">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M2 13h12M9 3l4 4-5 6H4l-2-2 7-8Z" stroke="currentColor" stroke-width="1.3"
                   stroke-linejoin="round" />
               </svg>
             </button>
-            <button class="wb-tool" data-tool="text" title="Text (T)">
+            <button type="button" class="wb-tool" data-tool="text" title="Text (T)">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M3 4h10M8 4v9M5 13h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
               </svg>
             </button>
-            <button class="wb-tool" data-tool="rect" title="Rectangle (R)">
+            <button type="button" class="wb-tool" data-tool="rect" title="Rectangle (R)">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <rect x="2.5" y="4.5" width="11" height="7" rx="1" stroke="currentColor" stroke-width="1.3" />
               </svg>
             </button>
-            <button class="wb-tool" data-tool="circle" title="Circle (C)">
+            <button type="button" class="wb-tool" data-tool="circle" title="Circle (C)">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.3" />
               </svg>
@@ -334,21 +334,26 @@
           </div>
           <div class="wb-divider"></div>
           <div class="wb-tool-group">
-            <button class="wb-size active" data-size="2" title="Thin"><span class="wb-size__dot"
+            <button type="button" class="wb-size active" data-size="2" title="Thin"><span class="wb-size__dot"
                 style="width:2px;height:2px"></span></button>
-            <button class="wb-size" data-size="5" title="Medium"><span class="wb-size__dot"
+            <button type="button" class="wb-size" data-size="5" title="Medium"><span class="wb-size__dot"
                 style="width:5px;height:5px"></span></button>
-            <button class="wb-size" data-size="10" title="Thick"><span class="wb-size__dot"
+            <button type="button" class="wb-size" data-size="10" title="Thick"><span class="wb-size__dot"
                 style="width:10px;height:10px"></span></button>
           </div>
           <div class="wb-divider"></div>
           <div class="wb-tool-group wb-colors" id="wb-colors">
-            <button class="wb-color active" data-color="#e2e8f0" style="background:#e2e8f0" title="White"></button>
-            <button class="wb-color" data-color="#f97316" style="background:#f97316" title="Orange"></button>
-            <button class="wb-color" data-color="#22d3ee" style="background:#22d3ee" title="Cyan"></button>
-            <button class="wb-color" data-color="#a78bfa" style="background:#a78bfa" title="Purple"></button>
-            <button class="wb-color" data-color="#4ade80" style="background:#4ade80" title="Green"></button>
-            <button class="wb-color" data-color="#fb7185" style="background:#fb7185" title="Red"></button>
+            <button type="button" class="wb-color active" data-color="#e2e8f0" style="background:#e2e8f0"
+              title="White"></button>
+            <button type="button" class="wb-color" data-color="#f97316" style="background:#f97316"
+              title="Orange"></button>
+            <button type="button" class="wb-color" data-color="#22d3ee" style="background:#22d3ee"
+              title="Cyan"></button>
+            <button type="button" class="wb-color" data-color="#a78bfa" style="background:#a78bfa"
+              title="Purple"></button>
+            <button type="button" class="wb-color" data-color="#4ade80" style="background:#4ade80"
+              title="Green"></button>
+            <button type="button" class="wb-color" data-color="#fb7185" style="background:#fb7185" title="Red"></button>
             <label class="wb-color wb-color--custom" title="Custom color">
               <input type="color" id="wb-color-custom" value="#e2e8f0" />
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -359,13 +364,13 @@
           </div>
           <div class="wb-divider"></div>
           <div class="wb-tool-group">
-            <button class="wb-tool wb-tool--action" id="wb-undo" title="Undo (Ctrl+Z)">
+            <button type="button" class="wb-tool wb-tool--action" id="wb-undo" title="Undo (Ctrl+Z)">
               <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
                 <path d="M2 7a5 5 0 1 0 1.5-3.5L2 2v4h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"
                   stroke-linejoin="round" />
               </svg>
             </button>
-            <button class="wb-tool wb-tool--action" id="wb-clear" title="Clear all">
+            <button type="button" class="wb-tool wb-tool--action" id="wb-clear" title="Clear all">
               <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
                 <path d="M2 4h11M6 4V2.5h3V4M5 4v8.5h5V4" stroke="currentColor" stroke-width="1.3"
                   stroke-linecap="round" stroke-linejoin="round" />

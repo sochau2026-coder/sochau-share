@@ -3,154 +3,361 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="description" content="Sochau Share — peer-to-peer encrypted file transfer. No server. No storage." />
-  <title>Files Sharing — Sochau Share</title>
+  <meta name="description" content="Sochau Share — peer-to-peer encrypted file transfer, whiteboard & more. No server. No storage." />
+  <title>Sochau Share</title>
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
-
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- ── Ambient Background ── -->
-  <div class="bg-orb bg-orb--1" aria-hidden="true"></div>
-  <div class="bg-orb bg-orb--2" aria-hidden="true"></div>
-  <div class="bg-orb bg-orb--3" aria-hidden="true"></div>
-  <div class="grain"            aria-hidden="true"></div>
+<!-- ═══════════════════════════════════════════════
+     LANDING PAGE
+═══════════════════════════════════════════════ -->
+<div id="page-landing" class="page page--landing active">
 
-  <main class="layout">
+  <!-- Background -->
+  <div class="land-bg" aria-hidden="true">
+    <div class="land-bg__grid"></div>
+    <div class="land-bg__orb land-bg__orb--1"></div>
+    <div class="land-bg__orb land-bg__orb--2"></div>
+    <div class="land-bg__orb land-bg__orb--3"></div>
+    <div class="land-bg__noise"></div>
+  </div>
 
-    <!-- ══ HEADER ══ -->
-    <header class="header">
-      <div class="logo">
-        <span class="logo__icon" aria-hidden="true">
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-            <path d="M11 1L20 6V16L11 21L2 16V6L11 1Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-            <path d="M11 1V21M2 6L11 11L20 6" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-          </svg>
-        </span>
-        <span class="logo__wordmark">Sochau<span class="logo__accent">Share</span></span>
-      </div>
-      <div class="e2e-badge" title="WebRTC DataChannel — files never touch a server">
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-          <rect x="2" y="5" width="8" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
-          <path d="M4 5V3.5a2 2 0 0 1 4 0V5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+  <!-- Nav -->
+  <nav class="land-nav">
+    <div class="land-nav__logo">
+      <span class="land-nav__logo-icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M10 1L18 5.5V14.5L10 19L2 14.5V5.5L10 1Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+          <path d="M10 1V19M2 5.5L10 10L18 5.5" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
         </svg>
-        End-to-end encrypted
-      </div>
-    </header>
+      </span>
+      <span class="land-nav__wordmark">Sochau<em>Share</em></span>
+    </div>
+    <div class="land-nav__badge">
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><rect x="1.5" y="4.5" width="8" height="5.5" rx="1.2" stroke="currentColor" stroke-width="1.1"/><path d="M3.5 4.5V3A2 2 0 0 1 7.5 3v1.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+      End-to-end encrypted
+    </div>
+  </nav>
 
-    <!-- ══ MAIN CARD ══ -->
-    <div class="card" id="card">
+  <!-- Hero -->
+  <section class="land-hero">
+    <div class="land-hero__eyebrow">
+      <span class="land-hero__dot"></span>
+      Peer-to-peer · No relay · No storage
+    </div>
 
-      <!-- Room strip -->
-      <div class="room-strip">
-        <div class="room-strip__left">
-          <span class="room-strip__label">Room</span>
-          <span class="room-strip__id" id="room-id-display">—</span>
+    <h1 class="land-hero__title">
+      Share files.<br/>
+      <em>Draw together.</em><br/>
+      <span class="land-hero__title-sub">Without a server in the way.</span>
+    </h1>
+
+    <p class="land-hero__desc">
+      Everything travels directly between browsers using WebRTC.<br/>
+      Nothing hits a server. Nothing is stored.
+    </p>
+
+    <!-- Room Input -->
+    <div class="land-enter">
+      <div class="land-enter__field">
+        <label class="land-enter__label" for="room-input">Room name</label>
+        <div class="land-enter__row">
+          <input
+            id="room-input"
+            class="land-enter__input"
+            type="text"
+            placeholder="e.g. aurora-512"
+            autocomplete="off"
+            spellcheck="false"
+            maxlength="64"
+          />
+          <button class="land-enter__btn" id="enter-btn">
+            Enter Room
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
         </div>
-        <button class="copy-btn" id="copy-btn" aria-label="Copy room link">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-            <rect x="4" y="4" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
-            <path d="M3 10H2.5A1.5 1.5 0 0 1 1 8.5V2.5A1.5 1.5 0 0 1 2.5 1H8.5A1.5 1.5 0 0 1 10 2.5V3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-          </svg>
-          <span id="copy-label">Copy link</span>
+        <p class="land-enter__hint" id="enter-hint">Min 6 characters · letters and numbers only</p>
+      </div>
+      <button class="land-enter__random" id="random-btn">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1 4h3l2 5 2-7 2 5 1-3h1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Generate random room
+      </button>
+    </div>
+  </section>
+
+  <!-- Feature previews -->
+  <section class="land-features">
+    <div class="land-features__grid">
+
+      <div class="land-feat land-feat--files">
+        <div class="land-feat__icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M13 2H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-6Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M13 2v6h5M8 13h6M8 10h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </div>
+        <div class="land-feat__body">
+          <h3 class="land-feat__title">File &amp; Folder Transfer</h3>
+          <p class="land-feat__desc">Send anything — files, entire folders — directly to all peers at once. 64KB chunks, live progress, cancel anytime.</p>
+        </div>
+        <div class="land-feat__tag">Available</div>
+      </div>
+
+      <div class="land-feat land-feat--whiteboard">
+        <div class="land-feat__icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="3" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M6 17v2M16 17v2M9 17v2M13 17v2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M7 10l2.5 2.5L15 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="land-feat__body">
+          <h3 class="land-feat__title">Collaborative Whiteboard</h3>
+          <p class="land-feat__desc">Draw, sketch, annotate in real-time. Pen, shapes, text, eraser — all synced peer-to-peer instantly.</p>
+        </div>
+        <div class="land-feat__tag">Available</div>
+      </div>
+
+      <div class="land-feat land-feat--more">
+        <div class="land-feat__icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="currentColor" stroke-width="1.4"/><path d="M11 7v4l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </div>
+        <div class="land-feat__body">
+          <h3 class="land-feat__title">More Coming</h3>
+          <p class="land-feat__desc">Voice chat, code collaboration, shared notes — all peer-to-peer, all encrypted. Built for the room you create.</p>
+        </div>
+        <div class="land-feat__tag land-feat__tag--soon">Soon</div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="land-footer">
+    Peer-to-peer · No relay · No storage ·
+    <a href="https://sudipdahal1.com.np" target="_blank" rel="noopener noreferrer">© Sudip Dahal</a>
+  </footer>
+
+</div><!-- /#page-landing -->
+
+
+<!-- ═══════════════════════════════════════════════
+     DASHBOARD
+═══════════════════════════════════════════════ -->
+<div id="page-dashboard" class="page page--dashboard">
+
+  <!-- Top navbar -->
+  <header class="dash-nav">
+    <div class="dash-nav__left">
+      <button class="dash-nav__back" id="dash-back-btn" title="Leave room">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="dash-nav__logo">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M10 1L18 5.5V14.5L10 19L2 14.5V5.5L10 1Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M10 1V19M2 5.5L10 10L18 5.5" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+        SochauShare
+      </div>
+    </div>
+
+    <!-- Feature Tabs -->
+    <nav class="dash-tabs" id="dash-tabs" role="tablist">
+      <button class="dash-tab active" data-tab="whiteboard" role="tab" aria-selected="true">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="1" y="1.5" width="13" height="10" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M4 11.5v2M11 11.5v2M6.5 11.5v2M9 11.5v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M4.5 7l2 2L11 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Whiteboard
+      </button>
+      <button class="dash-tab" data-tab="files" role="tab" aria-selected="false">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M9 1.5H4a1.5 1.5 0 0 0-1.5 1.5v9A1.5 1.5 0 0 0 4 13.5h7A1.5 1.5 0 0 0 12.5 12V5l-3.5-3.5Z" stroke="currentColor" stroke-width="1.2"/><path d="M9 1.5V5H12.5M5.5 9h4M5.5 7h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Files
+      </button>
+      <!-- Future tabs injected here by JS -->
+    </nav>
+
+    <div class="dash-nav__right">
+      <!-- Connection status pill -->
+      <div class="dash-conn" id="dash-conn">
+        <span class="dash-conn__dot"></span>
+        <span class="dash-conn__text" id="dash-conn-text">Connecting…</span>
+      </div>
+      <!-- Room ID + copy -->
+      <div class="dash-room">
+        <span class="dash-room__label">Room</span>
+        <span class="dash-room__id" id="dash-room-id">—</span>
+        <button class="dash-room__copy" id="dash-copy-btn" title="Copy room link">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2" stroke="currentColor" stroke-width="1.1"/><path d="M2.5 9H2A1.2 1.2 0 0 1 .8 7.8V2A1.2 1.2 0 0 1 2 .8H7.8A1.2 1.2 0 0 1 9 2v.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
         </button>
       </div>
+    </div>
+  </header>
 
-      <!-- Connection status -->
-      <div class="status-bar" id="status-bar" data-state="idle">
-        <span class="status-bar__dot" aria-hidden="true"></span>
-        <span class="status-bar__text" id="status-text">Initialising…</span>
-        <span class="status-bar__peer" id="peer-info"></span>
+  <!-- Error banner -->
+  <div class="dash-error" id="dash-error" hidden role="alert">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M7 4v3.5M7 9.5v.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+    <span id="dash-error-text"></span>
+    <button id="dash-error-close">✕</button>
+  </div>
+
+  <!-- Tab panels -->
+  <main class="dash-main" id="dash-main">
+
+    <!-- Whiteboard panel -->
+    <div class="dash-panel active" id="panel-whiteboard" role="tabpanel">
+      <div class="wb-toolbar" id="wb-toolbar">
+        <!-- Tool group -->
+        <div class="wb-tool-group">
+          <button class="wb-tool active" data-tool="pen" title="Pen (P)">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M11 2l3 3-8 8H3v-3l8-8Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M9.5 3.5l3 3" stroke="currentColor" stroke-width="1.3"/></svg>
+          </button>
+          <button class="wb-tool" data-tool="eraser" title="Eraser (E)">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 13h12M9 3l4 4-5 6H4l-2-2 7-8Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="wb-tool" data-tool="text" title="Text (T)">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M8 4v9M5 13h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </button>
+          <button class="wb-tool" data-tool="rect" title="Rectangle (R)">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2.5" y="4.5" width="11" height="7" rx="1" stroke="currentColor" stroke-width="1.3"/></svg>
+          </button>
+          <button class="wb-tool" data-tool="circle" title="Circle (C)">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.3"/></svg>
+          </button>
+        </div>
+
+        <div class="wb-divider"></div>
+
+        <!-- Stroke size -->
+        <div class="wb-tool-group">
+          <button class="wb-size active" data-size="2" title="Thin">
+            <span class="wb-size__dot" style="width:2px;height:2px"></span>
+          </button>
+          <button class="wb-size" data-size="5" title="Medium">
+            <span class="wb-size__dot" style="width:5px;height:5px"></span>
+          </button>
+          <button class="wb-size" data-size="10" title="Thick">
+            <span class="wb-size__dot" style="width:10px;height:10px"></span>
+          </button>
+        </div>
+
+        <div class="wb-divider"></div>
+
+        <!-- Color picker -->
+        <div class="wb-tool-group wb-colors" id="wb-colors">
+          <button class="wb-color active" data-color="#e2e8f0" style="background:#e2e8f0" title="White"></button>
+          <button class="wb-color" data-color="#f97316" style="background:#f97316" title="Orange"></button>
+          <button class="wb-color" data-color="#22d3ee" style="background:#22d3ee" title="Cyan"></button>
+          <button class="wb-color" data-color="#a78bfa" style="background:#a78bfa" title="Purple"></button>
+          <button class="wb-color" data-color="#4ade80" style="background:#4ade80" title="Green"></button>
+          <button class="wb-color" data-color="#fb7185" style="background:#fb7185" title="Red"></button>
+          <label class="wb-color wb-color--custom" title="Custom color">
+            <input type="color" id="wb-color-custom" value="#e2e8f0" />
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.1"/><path d="M6 3v6M3 6h6" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+          </label>
+        </div>
+
+        <div class="wb-divider"></div>
+
+        <!-- Actions -->
+        <div class="wb-tool-group">
+          <button class="wb-tool wb-tool--action" id="wb-undo" title="Undo (Ctrl+Z)">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 7a5 5 0 1 0 1.5-3.5L2 2v4h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="wb-tool wb-tool--action" id="wb-clear" title="Clear all">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 4h11M6 4V2.5h3V4M5 4v8.5h5V4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+        <!-- Peer cursors legend -->
+        <div class="wb-divider wb-divider--push"></div>
+        <div class="wb-peers" id="wb-peers"></div>
       </div>
 
-      <!-- Error banner (hidden by default) -->
-      <div class="error-banner" id="error-banner" role="alert" hidden>
-        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-          <circle cx="7.5" cy="7.5" r="6.5" stroke="currentColor" stroke-width="1.2"/>
-          <path d="M7.5 4v4M7.5 10.5v.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-        </svg>
-        <span id="error-text">An error occurred.</span>
-        <button class="error-banner__close" id="error-close" aria-label="Dismiss error">✕</button>
-      </div>
-
-      <!-- ── Drop Zone ── -->
-      <div
-        class="dropzone"
-        id="dropzone"
-        role="region"
-        aria-label="Drop files here or click to browse"
-        tabindex="0"
-        aria-disabled="false"
-      >
-        <div class="dropzone__content">
-          <div class="dropzone__ring" aria-hidden="true">
-            <svg class="dropzone__icon" width="40" height="40" viewBox="0 0 40 40" fill="none">
-              <circle cx="20" cy="20" r="18.5" stroke="currentColor" stroke-width="1" stroke-dasharray="3.5 3.5"/>
-              <path d="M20 27V15M13 21l7-7 7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <p class="dropzone__title">Drop files or folders</p>
-          <p class="dropzone__sub">Files travel directly to your peer — nothing hits a server</p>
-          <div class="dropzone__btns">
-            <label class="pick-btn pick-btn--files" for="file-input">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                <path d="M2 11V3.5A1.5 1.5 0 0 1 3.5 2h5L11 5v6a1.5 1.5 0 0 1-1.5 1.5h-6A1.5 1.5 0 0 1 2 11Z" stroke="currentColor" stroke-width="1.2"/>
-                <path d="M8.5 2v3.5H11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-              </svg>
-              Files
-            </label>
-            <label class="pick-btn pick-btn--folder" for="folder-input">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                <path d="M1 3.5A1.5 1.5 0 0 1 2.5 2H5l1.5 2H11.5A1.5 1.5 0 0 1 13 5.5V10a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 1 10V3.5Z" stroke="currentColor" stroke-width="1.2"/>
-              </svg>
-              Folder
-            </label>
-          </div>
+      <!-- Canvas -->
+      <div class="wb-canvas-wrap" id="wb-canvas-wrap">
+        <canvas id="wb-canvas"></canvas>
+        <div id="wb-text-input-wrap" class="wb-text-input-wrap" hidden>
+          <textarea id="wb-text-input" class="wb-text-input" rows="1" placeholder="Type here…"></textarea>
         </div>
       </div>
+    </div><!-- /#panel-whiteboard -->
 
-      <!-- File inputs live OUTSIDE the dropzone so they don't overlap each other -->
-      <input type="file" id="file-input"   class="hidden-input" multiple />
-      <input type="file" id="folder-input" class="hidden-input" webkitdirectory multiple />
+    <!-- Files panel -->
+    <div class="dash-panel" id="panel-files" role="tabpanel">
 
-      <!-- ── Send Button ── -->
-      <button class="send-btn" id="send-btn" disabled>
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <path d="M8 11V3M4 6l4-4 4 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M2 13.5h12" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-        </svg>
-        <span id="send-label">Send Files</span>
-      </button>
+      <div class="files-layout">
 
-      <!-- ── File Queue ── -->
-      <section class="queue-section" id="queue-section">
-        <div class="queue-section__header">
-          <span class="queue-section__title">Queue</span>
-          <div class="queue-section__actions">
-            <span class="queue-section__count" id="queue-count">0 files</span>
-            <button class="clear-btn" id="clear-btn" hidden>Clear</button>
+        <!-- Left: drop zone + queue -->
+        <div class="files-left">
+
+          <!-- Capacity picker (shown only to room creator before connect) -->
+          <div class="cap-picker" id="capacity-picker" hidden>
+            <span class="cap-picker__label">Room size</span>
+            <div class="cap-picker__btns">
+              <button class="cap-btn cap-btn--active" data-cap="2">2</button>
+              <button class="cap-btn" data-cap="3">3</button>
+              <button class="cap-btn" data-cap="4">4</button>
+            </div>
+            <button class="cap-connect" id="connect-btn">Connect</button>
           </div>
+
+          <!-- Drop zone -->
+          <div class="dropzone" id="dropzone" role="region" aria-label="Drop files here" tabindex="0">
+            <div class="dropzone__inner">
+              <div class="dropzone__ring" aria-hidden="true">
+                <svg class="dropzone__icon" width="36" height="36" viewBox="0 0 36 36" fill="none">
+                  <circle cx="18" cy="18" r="16.5" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
+                  <path d="M18 24V14M12 19l6-6 6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <p class="dropzone__title">Drop files or folders</p>
+              <p class="dropzone__sub">Travels directly — nothing hits a server</p>
+              <div class="dropzone__btns">
+                <label class="pick-btn" for="file-input">
+                  <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 10V3a1.2 1.2 0 0 1 1.2-1.2h4L10 5v5a1.2 1.2 0 0 1-1.2 1.2H3.2A1.2 1.2 0 0 1 2 10Z" stroke="currentColor" stroke-width="1.1"/><path d="M7.2 1.8V5H10" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+                  Files
+                </label>
+                <label class="pick-btn" for="folder-input">
+                  <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1 3a1.2 1.2 0 0 1 1.2-1.2H4.5L6 3.5h5.3A1.2 1.2 0 0 1 12.5 4.7V9.5A1.2 1.2 0 0 1 11.3 10.7H2.2A1.2 1.2 0 0 1 1 9.5V3Z" stroke="currentColor" stroke-width="1.1"/></svg>
+                  Folder
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <input type="file" id="file-input" class="hidden-input" multiple />
+          <input type="file" id="folder-input" class="hidden-input" webkitdirectory multiple />
+
+          <button class="send-btn" id="send-btn" disabled>
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 10V3M4 6l3.5-3.5L11 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 12.5h11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <span id="send-label">Send Files</span>
+          </button>
+
         </div>
-        <ul class="file-list" id="file-list" role="list" aria-label="File transfer queue"></ul>
-        <p class="empty-state" id="empty-state">Files you add will appear here.</p>
-      </section>
 
-    </div><!-- /.card -->
+        <!-- Right: peers + file queue -->
+        <div class="files-right">
 
-    <footer class="footer">
-      <span>Peer-to-peer · No relay · No storage ·</span>
-      <a href="https://sudipdahal1.com.np" class="footer__link" target="_blank" rel="noopener noreferrer">© Sudip Dahal</a>
-    </footer>
+          <!-- Peer mesh -->
+          <div class="peer-section">
+            <span class="peer-section__title">Peers</span>
+            <div class="peer-list" id="peer-list"></div>
+          </div>
+
+          <!-- Queue -->
+          <div class="queue-section">
+            <div class="queue-section__header">
+              <span class="queue-section__title">Queue</span>
+              <div class="queue-section__actions">
+                <span id="queue-count">0 files</span>
+                <button class="clear-btn" id="clear-btn" hidden>Clear</button>
+              </div>
+            </div>
+            <ul class="file-list" id="file-list" role="list" aria-label="File transfer queue"></ul>
+            <p class="empty-state" id="empty-state">Files you add will appear here.</p>
+          </div>
+
+        </div>
+      </div>
+    </div><!-- /#panel-files -->
 
   </main>
+</div><!-- /#page-dashboard -->
 
-  <!-- Socket.IO from CDN -->
-  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-  <script src="app.js" type="module"></script>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="whiteboard.js" type="module"></script>
+<script src="app.js" type="module"></script>
 </body>
 </html>

@@ -13,11 +13,18 @@ const Config = Object.freeze({
   CHUNK_SIZE:       64 * 1024,
   BUFFER_THRESHOLD: 8 * 1024 * 1024,
   ICE: [
+    // STUN — free, fast; works when both peers have open/simple NAT
     { urls: 'stun:stun.l.google.com:19302'  },
     { urls: 'stun:stun1.l.google.com:19302' },
     { urls: 'stun:stun.cloudflare.com:3478' },
+    // TURN relay — required when peers are behind symmetric NAT (most home/mobile ISPs)
+    // Uses OpenRelay (metered.ca) public TURN — no server setup needed
+    { urls: 'turn:openrelay.metered.ca:80',             username: 'openrelayproject', credential: 'openrelayproject' },
+    { urls: 'turn:openrelay.metered.ca:443',            username: 'openrelayproject', credential: 'openrelayproject' },
+    { urls: 'turn:openrelay.metered.ca:443?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' },
   ],
 });
+
 
 /* ════════════════════════════════════════
    STATE

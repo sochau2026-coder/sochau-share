@@ -59,7 +59,7 @@ a:hover { text-decoration: underline; }
 /* ════════════════════════════════════════════════
    LANDING PAGE
    ════════════════════════════════════════════════ */
-.page--landing { min-height: 100dvh; position: relative; overflow-x: hidden; }
+.page--landing { min-height: 100dvh; height: 100dvh; position: relative; overflow-x: hidden; overflow-y: auto; }
 
 /* Background layers */
 .land-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
@@ -87,7 +87,8 @@ a:hover { text-decoration: underline; }
 .land-nav {
   position: relative; z-index: 10;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 22px 44px;
+  padding: 14px 44px;
+  flex-shrink: 0;
 }
 .land-nav__logo {
   display: flex; align-items: center; gap: 10px;
@@ -105,16 +106,25 @@ a:hover { text-decoration: underline; }
   padding: 5px 12px; border-radius: 20px; background: var(--bg-card);
 }
 
+/* ── Hero body wrapper (side-by-side on desktop) ─ */
+.land-content {
+  position: relative; z-index: 10;
+  display: flex; flex-direction: column;
+  flex: 1; min-height: 0;
+  padding: 0 44px 20px;
+  gap: 32px;
+}
+
 /* ── Hero ────────────────────────────────────── */
 .land-hero {
-  position: relative; z-index: 10;
-  display: flex; flex-direction: column; align-items: center;
-  text-align: center; padding: 56px 24px 48px;
+  display: flex; flex-direction: column; align-items: flex-start;
+  text-align: left; padding: 0;
+  flex-shrink: 0;
 }
 .land-hero__eyebrow {
   display: flex; align-items: center; gap: 8px;
   font-size: .68rem; font-family: 'DM Mono', monospace; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--text-3); margin-bottom: 24px;
+  text-transform: uppercase; color: var(--text-3); margin-bottom: 16px;
 }
 .land-hero__dot {
   width: 6px; height: 6px; border-radius: 50%; background: var(--cyan);
@@ -127,44 +137,43 @@ a:hover { text-decoration: underline; }
 }
 
 .land-hero__title {
-  font-size: clamp(2.6rem, 6.5vw, 4.6rem);
+  font-size: clamp(2rem, 4vw, 3.4rem);
   font-weight: 800; line-height: 1.08; letter-spacing: -.04em;
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 .land-hero__title em {
   font-style: italic; font-family: 'Lora', serif;
   font-weight: 500; color: var(--cyan);
 }
 .land-hero__title-sub {
-  display: block; margin-top: 6px;
-  font-size: clamp(1rem, 2.2vw, 1.5rem);
+  display: block; margin-top: 4px;
+  font-size: clamp(.9rem, 1.6vw, 1.2rem);
   font-weight: 300; color: var(--text-2); letter-spacing: -.01em;
 }
 .land-hero__desc {
-  color: var(--text-2); font-size: .88rem; line-height: 1.75;
-  max-width: 400px; margin-bottom: 40px; font-weight: 300;
+  color: var(--text-2); font-size: .85rem; line-height: 1.75;
+  max-width: 440px; margin-bottom: 0; font-weight: 300;
 }
 
 /* ── Room Cards ──────────────────────────────── */
 .land-rooms {
   display: grid;
   grid-template-columns: 1fr 32px 1fr;
-  width: 100%; max-width: 720px;
-  margin-bottom: 52px;
+  width: 100%;
   align-items: stretch;
 }
 
 /* "or" column */
-.room-divider {
+.land-rooms__divider {
   display: flex; align-items: center; justify-content: center;
   position: relative;
 }
-.room-divider::before {
+.land-rooms__divider::before {
   content: '';
   position: absolute; top: 24px; bottom: 24px; left: 50%;
   width: 1px; background: var(--border-2);
 }
-.room-divider span {
+.land-rooms__divider span {
   font-size: .65rem; font-family: 'DM Mono', monospace; letter-spacing: .06em;
   color: var(--text-3); background: var(--bg); padding: 6px 0;
   position: relative; z-index: 1;
@@ -284,6 +293,7 @@ a:hover { text-decoration: underline; }
 .cap-btn--active .cap-btn__lbl { color: rgba(0,212,255,.6); }
 
 /* Card CTA */
+.room-card__cta,
 .room-card__btn {
   display: flex; align-items: center; justify-content: center; gap: 9px;
   width: 100%; padding: 14px 20px;
@@ -292,25 +302,30 @@ a:hover { text-decoration: underline; }
   transition: opacity .15s, background .15s, color .15s;
   letter-spacing: -.01em;
 }
+.room-card__cta--create,
 .room-card__btn--create {
   background: var(--cyan); color: #020912;
 }
+.room-card__cta--create:hover,
 .room-card__btn--create:hover { opacity: .88; }
+.room-card__cta--join,
 .room-card__btn--join {
-  background: transparent; color: var(--text-2);
+  background: rgba(157,123,255,.08); color: var(--purple);
+  border-top-color: rgba(157,123,255,.15);
 }
-.room-card__btn--join:hover { background: var(--purple-dim); color: var(--purple); }
+.room-card__cta--join:hover,
+.room-card__btn--join:hover { background: var(--purple-dim); color: var(--purple); box-shadow: inset 0 0 0 1px rgba(157,123,255,.2); }
 
 /* ── Feature Cards ───────────────────────────── */
-.land-features { position: relative; z-index: 10; padding: 0 44px 64px; }
+.land-features { position: relative; z-index: 10; padding: 0 0 0; flex-shrink: 0; }
 .land-features__grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 12px; max-width: 960px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
 }
 .land-feat {
   position: relative; display: flex; flex-direction: column;
   background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: var(--r-lg); padding: 22px; overflow: hidden;
+  border-radius: var(--r-lg); padding: 16px 18px; overflow: hidden;
   transition: border-color .2s, transform .2s;
 }
 .land-feat:hover { border-color: var(--border-2); transform: translateY(-3px); }
@@ -342,8 +357,8 @@ a:hover { text-decoration: underline; }
 /* ── Footer ──────────────────────────────────── */
 .land-footer {
   position: relative; z-index: 10;
-  text-align: center; padding: 20px;
-  font-size: .72rem; color: var(--text-3);
+  text-align: center; padding: 12px 20px;
+  font-size: .72rem; color: var(--text-3); flex-shrink: 0;
 }
 .land-footer a { color: var(--text-2); transition: color .15s; }
 .land-footer a:hover { color: var(--text); text-decoration: none; }
@@ -555,25 +570,67 @@ a:hover { text-decoration: underline; }
 /* ════════════════════════════════════════════════
    RESPONSIVE
    ════════════════════════════════════════════════ */
-@media (max-width: 768px) {
-  .land-nav     { padding: 16px 20px; }
-  .land-hero    { padding: 40px 20px 32px; }
-  .land-features { padding: 0 20px 44px; }
+
+/* ── Desktop: side-by-side hero layout ─────────── */
+@media (min-width: 900px) {
+  .land-content {
+    flex-direction: row;
+    align-items: stretch;
+    padding: 0 44px 20px;
+    gap: 48px;
+  }
+  .land-content__left {
+    flex: 1; display: flex; flex-direction: column;
+    justify-content: center; gap: 24px;
+    padding-bottom: 0;
+  }
+  .land-content__right {
+    width: 380px; flex-shrink: 0;
+    display: flex; flex-direction: column;
+    gap: 16px;
+    justify-content: center;
+  }
+  .land-hero { align-items: flex-start; text-align: left; }
+}
+
+/* ── Tablet / small desktop ────────────────────── */
+@media (max-width: 899px) {
+  .land-content {
+    flex-direction: column;
+    padding: 0 24px 16px;
+    gap: 20px;
+  }
+  .land-content__left { display: contents; }
+  .land-content__right { width: 100%; }
+
+  .land-hero { align-items: center; text-align: center; }
+  .land-hero__title { font-size: clamp(1.9rem, 6vw, 3rem); }
+  .land-hero__desc  { max-width: 480px; margin: 0 auto; }
+
+  .land-features__grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .land-nav { padding: 14px 24px; }
+}
+
+/* ── Mobile ────────────────────────────────────── */
+@media (max-width: 640px) {
+  .page--landing { height: auto; overflow-y: auto; }
+  .land-nav     { padding: 14px 16px; }
+  .land-content { padding: 0 16px 16px; }
   .land-features__grid { grid-template-columns: 1fr; }
+  .land-features { padding: 0; }
 
   /* Stack cards vertically on mobile */
   .land-rooms {
     grid-template-columns: 1fr;
     grid-template-rows: auto auto auto;
-    max-width: 420px;
   }
-  .room-divider {
-    height: 32px; flex-direction: row;
+  .land-rooms__divider {
+    height: 28px; flex-direction: row;
   }
-  .room-divider::before { top: 50%; bottom: auto; left: 16px; right: 16px; width: auto; height: 1px; }
+  .land-rooms__divider::before { top: 50%; bottom: auto; left: 16px; right: 16px; width: auto; height: 1px; }
 
-  .dash-nav__logo  { display: none; }
-  .dash-conn__text { display: none; }
+  .dash-nav__logo   { display: none; }
+  .dash-conn__text  { display: none; }
   .dash-room__label { display: none; }
 
   .files-layout { flex-direction: column; }

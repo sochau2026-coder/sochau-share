@@ -21,6 +21,7 @@ git pull origin main >> $LOG_FILE 2>&1
 cp $REPO_DIR/frontend/index.html $WEB_DIR/
 cp $REPO_DIR/frontend/style.css  $WEB_DIR/
 cp $REPO_DIR/frontend/app.js     $WEB_DIR/
+cp $REPO_DIR/frontend/whiteboard.js $WEB_DIR/
 echo "Frontend files updated" >> $LOG_FILE
 
 # Rebuild and restart backend only if server.js or package.json changed

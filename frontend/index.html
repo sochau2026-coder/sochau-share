@@ -26,223 +26,216 @@
     <!-- Background -->
     <div class="land-bg" aria-hidden="true">
       <div class="land-bg__grid"></div>
-      <div class="land-bg__orb land-bg__orb--1"></div>
-      <div class="land-bg__orb land-bg__orb--2"></div>
-      <div class="land-bg__orb land-bg__orb--3"></div>
-      <div class="land-bg__noise"></div>
+      <div class="land-bg__glow"></div>
     </div>
 
     <!-- Nav -->
     <nav class="land-nav">
       <div class="land-nav__logo">
-        <span class="land-nav__logo-icon" aria-hidden="true">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M10 1L18 5.5V14.5L10 19L2 14.5V5.5L10 1Z" stroke="currentColor" stroke-width="1.4"
-              stroke-linejoin="round" />
-            <path d="M10 1V19M2 5.5L10 10L18 5.5" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" />
+        <span class="land-nav__logo-icon">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <rect width="28" height="28" rx="14" fill="#00d4ff" />
+            <path d="M14 7L8 10.5v7L14 21l6-3.5v-7L14 7z" fill="var(--bg)" />
           </svg>
         </span>
-        <span class="land-nav__wordmark">Sochau<em>Share</em></span>
+        <span class="land-nav__wordmark">SOCHAUSHARE</span>
       </div>
-      <div class="land-nav__badge">
-        <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
-          <rect x="1.5" y="4.5" width="8" height="5.5" rx="1.2" stroke="currentColor" stroke-width="1.1" />
-          <path d="M3.5 4.5V3A2 2 0 0 1 7.5 3v1.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
-        </svg>
-        End-to-end encrypted
+      <div class="land-nav__links">
+        <a href="#">Features</a>
+        <a href="#">Technology</a>
+        <a href="#">Security</a>
+      </div>
+      <div class="land-nav__actions">
+        <div class="land-nav__badge-e2e">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <rect x="2" y="5" width="8" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2" />
+            <path d="M4 5V3.5a2 2 0 0 1 4 0V5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+          </svg>
+          END-TO-END ENCRYPTED
+        </div>
+        <button class="land-nav__btn-app" onclick="document.getElementById('create-room-input').focus()">Open
+          App</button>
       </div>
     </nav>
 
-    <!-- Main content: hero (left) + cards (right) on desktop -->
-    <div class="land-content">
-      <div class="land-content__left">
+    <!-- Main Content -->
+    <div class="land-main">
 
-        <!-- Hero text -->
-        <section class="land-hero">
-          <div class="land-hero__eyebrow">
-            <span class="land-hero__dot"></span>
-            Peer-to-peer · No relay · No storage
+      <!-- Top Half: Hero Split -->
+      <div class="land-hero-split">
+
+        <!-- Left Side: Hero Text -->
+        <div class="land-hero-left">
+          <div class="hero-badge">
+            <span class="hero-badge-dot"></span>
+            SERVERLESS WEBRTC V2.0
           </div>
 
-          <h1 class="land-hero__title">
+          <h1 class="hero-title">
             Share files.<br />
-            <em>Draw together.</em><br />
-            <span class="land-hero__title-sub">Without a server in the way.</span>
+            <span class="hero-title-gradient">Draw together.</span>
           </h1>
 
-          <p class="land-hero__desc">
-            Everything travels directly between browsers using WebRTC.
-            Nothing hits a server. Nothing is stored.
+          <p class="hero-desc">
+            Experience true peer-to-peer collaboration. No middleman, no cloud storage, just pure encrypted speed
+            directly between your browsers.
           </p>
-        </section>
 
-        <!-- Feature previews -->
-        <section class="land-features">
-          <div class="land-features__grid">
+          <ul class="hero-checks">
+            <li><svg width="18" height="18" viewBox="0 0 18 18">
+                <circle cx="9" cy="9" r="9" fill="#00d4ff" />
+                <path d="M5 9.5L8 12.5l5-6" stroke="var(--bg-card)" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg> No sign-up required</li>
+            <li><svg width="18" height="18" viewBox="0 0 18 18">
+                <circle cx="9" cy="9" r="9" fill="#00d4ff" />
+                <path d="M5 9.5L8 12.5l5-6" stroke="var(--bg-card)" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg> Unlimited file size</li>
+            <li><svg width="18" height="18" viewBox="0 0 18 18">
+                <circle cx="9" cy="9" r="9" fill="#00d4ff" />
+                <path d="M5 9.5L8 12.5l5-6" stroke="var(--bg-card)" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg> Real-time sync</li>
+          </ul>
+        </div>
 
-            <div class="land-feat land-feat--files">
-              <div class="land-feat__icon">
-                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                  <path d="M13 2H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-6Z" stroke="currentColor"
-                    stroke-width="1.4" stroke-linejoin="round" />
-                  <path d="M13 2v6h5M8 13h6M8 10h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
-                </svg>
-              </div>
-              <div class="land-feat__body">
-                <h3 class="land-feat__title">File &amp; Folder Transfer</h3>
-                <p class="land-feat__desc">Send anything — files, entire folders — directly to all peers at once. 64KB
-                  chunks, live progress, cancel anytime.</p>
-              </div>
-              <div class="land-feat__tag">Available</div>
-            </div>
+        <!-- Right Side: Action Cards -->
+        <div class="land-hero-right">
 
-            <div class="land-feat land-feat--whiteboard">
-              <div class="land-feat__icon">
-                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                  <rect x="2" y="3" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.4" />
-                  <path d="M6 17v2M16 17v2M9 17v2M13 17v2" stroke="currentColor" stroke-width="1.4"
-                    stroke-linecap="round" />
-                  <path d="M7 10l2.5 2.5L15 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                </svg>
-              </div>
-              <div class="land-feat__body">
-                <h3 class="land-feat__title">Collaborative Whiteboard</h3>
-                <p class="land-feat__desc">Draw, sketch, annotate in real-time. Pen, shapes, text, eraser — all synced
-                  peer-to-peer instantly.</p>
-              </div>
-              <div class="land-feat__tag">Available</div>
-            </div>
-
-            <div class="land-feat land-feat--more">
-              <div class="land-feat__icon">
-                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                  <circle cx="11" cy="11" r="9" stroke="currentColor" stroke-width="1.4" />
-                  <path d="M11 7v4l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
-                </svg>
-              </div>
-              <div class="land-feat__body">
-                <h3 class="land-feat__title">More Coming</h3>
-                <p class="land-feat__desc">Voice chat, code collaboration, shared notes — all peer-to-peer, all
-                  encrypted.</p>
-              </div>
-              <div class="land-feat__tag land-feat__tag--soon">Soon</div>
-            </div>
-
-          </div>
-        </section>
-
-      </div><!-- /.land-content__left -->
-
-      <div class="land-content__right">
-
-        <!-- Create / Join cards -->
-        <div class="land-rooms">
-
-          <!-- CREATE -->
-          <div class="room-card room-card--create">
-            <div class="room-card__header">
-              <div class="room-card__icon">
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <circle cx="9" cy="9" r="7.5" stroke="currentColor" stroke-width="1.3" />
-                  <path d="M9 5.5v7M5.5 9h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                </svg>
-              </div>
-              <div>
-                <div class="room-card__title">Create Room</div>
-                <div class="room-card__sub">You set the room up &amp; share the link</div>
-              </div>
-            </div>
-
-            <div class="room-card__body">
-              <label class="room-field__label" for="create-room-input">Room name</label>
-              <div class="room-field__row">
-                <input id="create-room-input" class="room-field__input" type="text" autocomplete="off"
-                  spellcheck="false" maxlength="64" placeholder="e.g. aurora-512" />
-                <button class="room-field__refresh" id="create-refresh-btn" title="Generate new name">
-                  <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                    <path d="M11 6.5A4.5 4.5 0 1 1 8 2.3M11 2v4H7" stroke="currentColor" stroke-width="1.3"
-                      stroke-linecap="round" stroke-linejoin="round" />
+          <!-- Create Card -->
+          <div class="action-card create-card">
+            <h2 class="action-card-title">
+              <span class="icon-circle create-icon-circle"><svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+                </svg></span>
+              Create a New Room
+            </h2>
+            <div class="action-card-body">
+              <div class="input-wrap">
+                <input id="create-room-input" type="text" placeholder="Enter room name..." maxlength="64"
+                  autocomplete="off" spellcheck="false" />
+                <button class="magic-btn" id="create-refresh-btn" title="Generate new name">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M2.5 13.5l11-11M13.5 6v-3.5h-3.5M6 13.5L2.5 10v3.5h3.5z" stroke="var(--cyan)"
+                      stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
                 </button>
               </div>
 
-              <div class="cap-row">
-                <span class="cap-row__label">Room size</span>
-                <div class="cap-row__btns">
-                  <button class="cap-btn cap-btn--active" data-cap="2">
-                    <span class="cap-btn__num">2</span>
-                    <span class="cap-btn__lbl">people</span>
-                  </button>
-                  <button class="cap-btn" data-cap="3">
-                    <span class="cap-btn__num">3</span>
-                    <span class="cap-btn__lbl">people</span>
-                  </button>
-                  <button class="cap-btn" data-cap="4">
-                    <span class="cap-btn__num">4</span>
-                    <span class="cap-btn__lbl">people</span>
-                  </button>
+              <div class="cap-selector">
+                <span class="cap-label">Room Capacity</span>
+                <div class="cap-toggles">
+                  <button class="cap-btn cap-btn--active" data-cap="2">2 PEERS</button>
+                  <button class="cap-btn" data-cap="3">3 PEERS</button>
+                  <button class="cap-btn" data-cap="4">4 PEERS</button>
                 </div>
               </div>
 
-              <p class="room-field__hint" id="create-hint"> </p>
-            </div>
+              <p id="create-hint" class="room-hint hidden"></p>
 
-            <button class="room-card__cta room-card__cta--create" id="create-btn">
-              Create Room
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+              <button id="create-btn" class="btn-primary create-btn">INITIALIZE ROOM</button>
+            </div>
+          </div>
+
+          <!-- Join Card -->
+          <div class="action-card join-card">
+            <h2 class="action-card-title">
+              <span class="icon-circle join-icon-circle"><svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M7 5a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm2 2H5C2.5 7 2 8.5 2 10v1h10v-1c0-1.5-.5-3-3-3zM10 5l3 3"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg></span>
+              Join Existing Session
+            </h2>
+            <div class="action-card-body join-body">
+              <div class="input-wrap join-input-wrap">
+                <input id="join-room-input" type="text" placeholder="Paste room code..." maxlength="64"
+                  autocomplete="off" spellcheck="false" />
+              </div>
+              <button id="join-btn" class="btn-primary join-btn">JOIN</button>
+            </div>
+            <p id="join-hint" class="room-hint hidden"></p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Bottom Half: Features -->
+      <div class="land-bottom">
+        <h3 class="bottom-title">Built for high performance</h3>
+
+        <div class="features-grid">
+          <div class="feat-card">
+            <div class="feat-icon feat-blue">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M2 3h5l2 2h5v8H2V3z" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                   stroke-linejoin="round" />
               </svg>
-            </button>
+            </div>
+            <div class="feat-head">
+              <h4>File & Folder Transfer</h4>
+              <span class="feat-badge feat-badge-avail">AVAILABLE</span>
+            </div>
+            <p>Direct binary stream between devices. No file size limits. Folder structure preservation.</p>
           </div>
 
-          <!-- DIVIDER -->
-          <div class="land-rooms__divider">
-            <span>or</span>
-          </div>
-
-          <!-- JOIN -->
-          <div class="room-card room-card--join">
-            <div class="room-card__header">
-              <div class="room-card__icon room-card__icon--join">
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <path d="M12 9H3M7 5l-4 4 4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                  <path d="M10 3h3a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-3" stroke="currentColor" stroke-width="1.4"
-                    stroke-linecap="round" />
-                </svg>
-              </div>
-              <div>
-                <div class="room-card__title">Join Room</div>
-                <div class="room-card__sub">Enter a room name shared with you</div>
-              </div>
-            </div>
-
-            <div class="room-card__body">
-              <label class="room-field__label" for="join-room-input">Room name</label>
-              <input id="join-room-input" class="room-field__input" type="text" autocomplete="off" spellcheck="false"
-                maxlength="64" placeholder="Paste room name here" />
-              <p class="room-field__hint" id="join-hint"> </p>
-            </div>
-
-            <button class="room-card__cta room-card__cta--join" id="join-btn">
-              Join Room
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+          <div class="feat-card">
+            <div class="feat-icon feat-cyan">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M3 12.5l9-9 1.5 1.5-9 9H3v-1.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                   stroke-linejoin="round" />
               </svg>
-            </button>
+            </div>
+            <div class="feat-head">
+              <h4>Collaborative Whiteboard</h4>
+              <span class="feat-badge feat-badge-avail">AVAILABLE</span>
+            </div>
+            <p>Zero-latency vector sketching. Real-time cursor synchronization for effortless brainstorming.</p>
           </div>
 
-        </div><!-- /.land-rooms -->
+          <div class="feat-card">
+            <div class="feat-icon feat-purple">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M9 2L4 9h4l-1 5 5-7H8l1-5z" fill="currentColor" />
+              </svg>
+            </div>
+            <div class="feat-head">
+              <h4>More Coming</h4>
+              <span class="feat-badge feat-badge-soon">SOON</span>
+            </div>
+            <p>Experimental peer-to-peer code editor and audio/video spatial communication modules.</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
-      </div><!-- /.land-content__right -->
-    </div><!-- /.land-content -->
-
+    <!-- Footer -->
     <footer class="land-footer">
-      Peer-to-peer · No relay · No storage ·
-      <a href="https://sudipdahal1.com.np" target="_blank" rel="noopener noreferrer">© Sudip Dahal</a>
+      <div class="foot-left">
+        <svg width="18" height="18" viewBox="0 0 28 28" fill="none" style="opacity:0.6">
+          <rect width="28" height="28" rx="14" fill="var(--text-3)" />
+          <path d="M14 7L8 10.5v7L14 21l6-3.5v-7L14 7z" fill="var(--bg)" />
+        </svg>
+        SOCHAUSHARE &copy; 2024
+      </div>
+      <div class="foot-mid">
+        <span>PEER-TO-PEER</span>
+        <span>NO RELAY</span>
+        <span>NO STORAGE</span>
+      </div>
+      <div class="foot-right">
+        <a href="#"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="foot-icon">
+            <path d="M4.5 5.5l4 2.5-4 2.5M9.5 10.5h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg></a>
+        <a href="#"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="foot-icon">
+            <circle cx="8" cy="8" r="4" stroke="currentColor" stroke-width="1.5" />
+            <circle cx="8" cy="2" r="1.5" fill="currentColor" />
+            <circle cx="14" cy="8" r="1.5" fill="currentColor" />
+            <circle cx="8" cy="14" r="1.5" fill="currentColor" />
+            <circle cx="2" cy="8" r="1.5" fill="currentColor" />
+          </svg></a>
+      </div>
     </footer>
 
   </div><!-- /#page-landing -->

@@ -66,8 +66,8 @@ function wbBroadcast(data) {
 const Router = {
   init() {
     const parts = window.location.pathname.split('/').filter(Boolean);
-    const roomId = parts[0];
-    if (roomId && /^[a-zA-Z0-9]{6,64}$/.test(roomId)) {
+    const roomId = parts[0]?.toLowerCase();
+    if (roomId && /^[a-z0-9\-]{6,64}$/.test(roomId)) {
       Router.goToDashboard(roomId, false, 2);
     }
     window.addEventListener('popstate', () => {
@@ -394,7 +394,8 @@ const Sender = {
     document.querySelector(`[data-file-id="${fileId}"] [data-role="cancel"]`)
       ?.addEventListener('click', () => { cancel.cancelled = true; }, { once: true });
     await Promise.all(pids.map(pid => {
-      const dc = entry.dc;
+      const entry = State.peers.get(pid);
+      const dc = entry?.dc;
       return dc?.readyState === 'open' ? Sender._toPeer(file, fileId, total, pid, dc, cancel) : Promise.resolve();
     }));
     pids.forEach(p => State.activeSends.delete(p));
@@ -534,14 +535,14 @@ const Landing = {
     });
 
     const validate = (raw, hntEl, inputEl) => {
-      const clean = raw.replace(/-/g, '');
-      if (!/^[a-zA-Z0-9\-]{6,64}$/.test(raw) || clean.length < 6) {
+      const clean = raw.trim().toLowerCase();
+      if (!/^[a-z0-9\-]{6,64}$/.test(clean)) {
         inputEl.classList.add('error');
         hntEl.classList.add('error');
-        hntEl.textContent = 'Must be 6–64 chars, letters and numbers only';
+        hntEl.textContent = 'Use 6–64 letters, numbers, or hyphens';
         return null;
       }
-      return clean.slice(0, 64);
+      return clean;
     };
 
     document.getElementById('create-btn')?.addEventListener('click', () => {

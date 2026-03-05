@@ -143,8 +143,11 @@ export const Whiteboard = (() => {
     _pushHistory();
     if (tool === 'pen' || tool === 'eraser') {
       _applyPenCtx();
+      // We draw discrete segments in _onMove, so we don't need a persistent path here.
+      // But we call beginPath/moveTo to set the starting point.
       ctx.beginPath();
       ctx.moveTo(x, y);
+      ctx.stroke(); // Draw a single point
     } else {
       snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
     }
@@ -158,6 +161,9 @@ export const Whiteboard = (() => {
 
     if (tool === 'pen' || tool === 'eraser') {
       _applyPenCtx();
+      // Discrete segment drawing: prevents path contamination from remote peers
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
       ctx.lineTo(x, y);
       ctx.stroke();
       _broadcast({

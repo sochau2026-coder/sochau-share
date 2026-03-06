@@ -13,16 +13,30 @@ const Config = Object.freeze({
   CHUNK_SIZE: 64 * 1024,
   BUFFER_THRESHOLD: 8 * 1024 * 1024,
   ICE: [
-    // STUN — free, fast; works when both peers have open/simple NAT
-    { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:stun1.l.google.com:19302' },
-    { urls: 'stun:stun.cloudflare.com:3478' },
-    // TURN relay — required when peers are behind symmetric NAT (most home/mobile ISPs)
-    // Uses OpenRelay (metered.ca) public TURN — no server setup needed
-    { urls: 'turn:openrelay.metered.ca:80', username: 'openrelayproject', credential: 'openrelayproject' },
-    { urls: 'turn:openrelay.metered.ca:443', username: 'openrelayproject', credential: 'openrelayproject' },
-    { urls: 'turn:openrelay.metered.ca:443?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' },
-  ],
+  { urls: 'stun:stun.l.google.com:19302' },
+  { urls: 'stun:stun1.l.google.com:19302' },
+  { urls: 'stun:share.sochau.cloud:3478' },
+  {
+    urls:       'turn:share.sochau.cloud:3478',
+    username:   'sochau',
+    credential: 'a4dc038aa26d6469847ba0b32ab752fb82f83d23a572e4e19d2334f3dfb40691',
+  },
+  {
+    urls:       'turn:share.sochau.cloud:3478?transport=tcp',
+    username:   'sochau',
+    credential: 'a4dc038aa26d6469847ba0b32ab752fb82f83d23a572e4e19d2334f3dfb40691',
+  },
+  {
+    urls:       'turns:share.sochau.cloud:5349',
+    username:   'sochau',
+    credential: 'a4dc038aa26d6469847ba0b32ab752fb82f83d23a572e4e19d2334f3dfb40691',
+  },
+  {
+    urls:       'turns:share.sochau.cloud:5349?transport=tcp',
+    username:   'sochau',
+    credential: 'a4dc038aa26d6469847ba0b32ab752fb82f83d23a572e4e19d2334f3dfb40691',
+  },
+],
 });
 
 

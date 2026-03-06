@@ -10,6 +10,9 @@
  *
  * Room registry:
  *   rooms: Map<roomId, { capacity: number, peers: Set<socketId> }>
+ *
+ * FIX: Room IDs are normalized to lowercase on arrival so that
+ *      "MyRoom", "myroom", and "MYROOM" all resolve to the same room.
  */
 
 "use strict";
@@ -26,8 +29,13 @@ const PORT       = process.env.PORT       || 3000;
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
 
 // ─── Validation ───────────────────────────────────────────────────────────────
-const ROOM_ID_RE       = /^[a-zA-Z0-9]{6,64}$/;
+// Only lowercase after normalization — no uppercase needed
+const ROOM_ID_RE       = /^[a-z0-9\-]{6,64}$/;
 const VALID_CAPACITIES = new Set([2, 3, 4]);
+
+function normalizeRoomId(id) {
+  return typeof id === "string" ? id.trim().toLowerCase() : "";
+}
 
 function isValidRoomId(id) {
   return typeof id === "string" && ROOM_ID_RE.test(id);
@@ -86,7 +94,8 @@ app.get("/health", (_req, res) => {
 
 // Room probe — returns current peers, capacity, full status
 app.get("/:roomId", (req, res) => {
-  const { roomId } = req.params;
+  // FIX: normalize to lowercase before validation and lookup
+  const roomId = normalizeRoomId(req.params.roomId);
   if (!isValidRoomId(roomId)) {
     return res.status(400).json({ error: "Invalid room ID." });
   }
@@ -146,8 +155,11 @@ io.on("connection", (socket) => {
   // ── join-room ──────────────────────────────────────────────────────────────
   // Payload: { roomId: string, capacity?: 2|3|4 }
   // capacity is honoured only when creating a new room (first joiner sets it).
-  socket.on("join-room", ({ roomId, capacity } = {}) => {
+  socket.on("join-room", ({ roomId: rawRoomId, capacity } = {}) => {
     if (!checkRate()) return;
+
+    // FIX: normalize to lowercase before any validation or lookup
+    const roomId = normalizeRoomId(rawRoomId);
 
     if (!isValidRoomId(roomId)) {
       socket.emit("error", { message: "Invalid room ID." });

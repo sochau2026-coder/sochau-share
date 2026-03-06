@@ -93,6 +93,7 @@ const Router = {
     if (window.location.pathname !== url) history.pushState({ roomId }, '', url);
     DashUI.setRoom(roomId);
     DashUI.setConn('connecting', 'Connecting…');
+    Whiteboard.resize(); // Ensure canvas has dimensions before signaling starts
     App.startRoom(roomId, isCreator, capacity);
   },
 };
@@ -580,6 +581,7 @@ const App = {
 
   startRoom(roomId, isCreator, capacity) {
     Whiteboard.broadcastFn = wbBroadcast; // set early, updated again on DC open
+    Whiteboard.resize(); // Safety resize
     Signaling.connect(roomId, isCreator ? capacity : 2);
     DashUI.updatePeers();
   },

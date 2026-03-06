@@ -47,9 +47,17 @@ export const Whiteboard = (() => {
 
   function resize() {
     if (!canvas || !wrap) return;
+    const cw = wrap.clientWidth;
+    const ch = wrap.clientHeight;
+    if (cw === 0 || ch === 0) {
+      console.warn('[wb] resize deferred: wrap is 0x0');
+      return;
+    }
+
+    console.log(`[wb] resizing to ${cw}x${ch}`);
     const snapshot_data = canvas.width > 0 && canvas.height > 0 ? canvas.toDataURL() : null;
-    canvas.width = wrap.clientWidth;
-    canvas.height = wrap.clientHeight;
+    canvas.width = cw;
+    canvas.height = ch;
     _resetCtx();
     if (snapshot_data) {
       const img = new Image();
@@ -136,6 +144,11 @@ export const Whiteboard = (() => {
 
   function _onDown(e) {
     if (tool === 'text') return;
+    if (canvas.width === 0 || canvas.height === 0) {
+      console.warn('[wb] skip drawing: canvas is 0x0');
+      resize(); // try one last time
+      if (canvas.width === 0) return;
+    }
     const { x, y } = _pos(e);
     drawing = true;
     startX = lastX = x;
@@ -149,12 +162,18 @@ export const Whiteboard = (() => {
       ctx.moveTo(x, y);
       ctx.stroke(); // Draw a single point
     } else {
-      snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      try {
+        snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      } catch (err) {
+        console.error('[wb] getImageData failed:', err);
+        snapshot = null;
+      }
     }
   }
 
   function _onMove(e) {
     const { x, y } = _pos(e);
+    if (canvas.width === 0 || canvas.height === 0) return;
     // Always broadcast cursor
     _broadcast({ type: 'cursor', x: x / canvas.width, y: y / canvas.height });
     if (!drawing) return;

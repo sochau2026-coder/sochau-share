@@ -121,7 +121,23 @@ services:
         max-size: "20m"
         max-file: "5"
 
-  # ══════════════════════════════════════════════════════════
+  # ════════════════════════════════════════
+  # TURN SERVER — coturn for WebRTC relay
+  # ════════════════════════════════════════
+  turn:
+    image: coturn/coturn:latest
+    container_name: sochau-turn
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./turn/turnserver.conf:/etc/coturn/turnserver.conf:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ════════════════════════════════════════
   # CERTBOT — automatic TLS certificate renewal (optional)
   # Comment out if you manage certs manually or use Caddy.
   # ══════════════════════════════════════════════════════════

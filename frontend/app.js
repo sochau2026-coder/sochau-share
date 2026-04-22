@@ -1,42 +1,22 @@
 'use strict';
 
 import { Whiteboard } from './whiteboard.js';
+import { ICE_SERVERS } from './ice-config.js';
 
 /* ════════════════════════════════════════
    CONFIG
 ════════════════════════════════════════ */
 const Config = Object.freeze({
   SIGNALING_URL: (() => {
-    if (window.location.port === '5173') return 'http://localhost:3000';
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return 'http://localhost:3000';
     return window.location.origin;
   })(),
   CHUNK_SIZE: 64 * 1024,
   BUFFER_THRESHOLD: 8 * 1024 * 1024,
   ICE: [
-  { urls: 'stun:stun.l.google.com:19302' },
-  { urls: 'stun:stun1.l.google.com:19302' },
-  { urls: 'stun:share.sochau.cloud:3478' },
-  {
-    urls:       'turn:share.sochau.cloud:3478',
-    username:   'sochau',
-    credential: 'a4dc038aa26d6469847ba0b32ab752fb82f83d23a572e4e19d2334f3dfb40691',
-  },
-  {
-    urls:       'turn:share.sochau.cloud:3478?transport=tcp',
-    username:   'sochau',
-    credential: 'a4dc038aa26d6469847ba0b32ab752fb82f83d23a572e4e19d2334f3dfb40691',
-  },
-  {
-    urls:       'turns:share.sochau.cloud:5349',
-    username:   'sochau',
-    credential: 'a4dc038aa26d6469847ba0b32ab752fb82f83d23a572e4e19d2334f3dfb40691',
-  },
-  {
-    urls:       'turns:share.sochau.cloud:5349?transport=tcp',
-    username:   'sochau',
-    credential: 'a4dc038aa26d6469847ba0b32ab752fb82f83d23a572e4e19d2334f3dfb40691',
-  },
-],
+    ...ICE_SERVERS.stun,
+    ...ICE_SERVERS.turn,
+  ],
 });
 
 
@@ -145,9 +125,12 @@ const DashUI = {
     document.getElementById('dash-conn-text').textContent = text;
   },
 
-  showError(msg) {
+  showError(msg, autoHide = true) {
     document.getElementById('dash-error-text').textContent = msg;
     document.getElementById('dash-error').hidden = false;
+    if (autoHide) {
+      setTimeout(() => DashUI.hideError(), 4000);
+    }
   },
   hideError() { document.getElementById('dash-error').hidden = true; },
 
@@ -277,7 +260,7 @@ const Signaling = {
     s.on('answer', ({ senderId, sdp }) => Mesh.handleAnswer(senderId, sdp));
     s.on('ice-candidate', ({ senderId, candidate }) => Mesh.handleIce(senderId, candidate));
     s.on('peer-left', ({ socketId }) => Mesh.peerLeft(socketId));
-    s.on('error', ({ message }) => { DashUI.showError(message); DashUI.setConn('error', 'Error'); });
+    s.on('error', ({ message }) => { DashUI.showError(message, false); DashUI.setConn('error', 'Error'); });
     s.on('disconnect', () => DashUI.setConn('error', 'Disconnected'));
     s.on('connect_error', () => { DashUI.setConn('error', 'No server'); DashUI.showError('Cannot connect to signaling server.'); });
   },
@@ -297,11 +280,41 @@ const Mesh = {
     const entry = { pc, dc: null };
     State.peers.set(peerId, entry);
 
-    pc.onicecandidate = ({ candidate }) => { if (candidate) Signaling.ice(peerId, candidate); };
+    pc.onicecandidate = ({ candidate }) => {
+      if (candidate) {
+        console.log('[ice candidate]', peerId, candidate.candidate);
+        Signaling.ice(peerId, candidate);
+      }
+    };
+    pc.oniceconnectionstatechange = () => {
+      console.log('[ice state]', peerId, pc.iceConnectionState);
+    };
+    pc.onicegatheringstatechange = () => {
+      console.log('[gathering state]', peerId, pc.iceGatheringState);
+    };
     pc.onconnectionstatechange = () => {
-      if (pc.connectionState === 'connected') Mesh._peerUp(peerId);
-      if (pc.connectionState === 'failed' ||
-        pc.connectionState === 'disconnected') Mesh.peerLeft(peerId);
+      console.log('[pc state]', peerId, pc.connectionState);
+
+      if (pc.connectionState === 'connected') {
+        Mesh._peerUp(peerId);
+        return;
+      }
+
+      if (pc.connectionState === 'failed' || pc.connectionState === 'closed') {
+        Mesh.peerLeft(peerId);
+        return;
+      }
+
+      if (pc.connectionState === 'disconnected') {
+        setTimeout(() => {
+          const entry = State.peers.get(peerId);
+          if (!entry || entry.pc !== pc) return;
+          if (pc.connectionState === 'disconnected') {
+            console.warn('[pc] disconnect timeout -> removing peer', peerId);
+            Mesh.peerLeft(peerId);
+          }
+        }, 8000);
+      }
     };
     pc.ondatachannel = ({ channel }) => {
       entry.dc = channel;
@@ -323,7 +336,7 @@ const Mesh = {
     dc.binaryType = 'arraybuffer';
     dc.bufferedAmountLowThreshold = Config.BUFFER_THRESHOLD / 2;
     dc.onopen = () => Mesh._dcOpen(peerId);
-    dc.onclose = () => Mesh.peerLeft(peerId);
+    dc.onclose = () => { console.warn('[dc closed]', peerId); };
     dc.onerror = e => console.error('[dc error]', e);
     dc.onmessage = ({ data }) => Receiver.handle(peerId, data);
     dc.onbufferedamountlow = () => Sender.drained(peerId);

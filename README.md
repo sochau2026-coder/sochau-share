@@ -310,6 +310,65 @@ docker compose down -v
 
 ---
 
+## Whiteboard Features
+
+### Infinite Canvas
+- **Pan**: Middle-click drag or right-click drag (unlimited)
+- **Zoom**: Ctrl+Scroll (10%-1000%) or +/- buttons
+- **Zoom Scaling**: Exponential (×1.2) for smooth experience
+
+### Brush Size Control
+- **Range**: 1-30 pixels
+- **Controls**: Click +/- buttons or press -/+ keys
+- **Display**: Shows current size in toolbar
+
+### Tools
+| Key | Tool |
+|-----|------|
+| P | Pen |
+| E | Eraser |
+| T | Text |
+| R | Rectangle |
+| C | Circle |
+
+### Other Controls
+- `Ctrl+Z` - Undo
+- Click "Clear" - Clear canvas
+- "Invite Peers" - Share room code
+
+---
+
+## Fixes Applied
+
+### Fix #1: Infinite Zoom Range
+- MIN_ZOOM: 0.5 → 0.1 (10%)
+- MAX_ZOOM: 3 → 10 (1000%)
+- Linear → Exponential scaling
+
+### Fix #2: Red Warning Line
+- Added CSS `[hidden]` rule
+- Error indicator hidden on startup
+
+### Fix #3: Drawing Disappearance
+- Removed inappropriate `clearRect()` from `_resetCtx()`
+- Drawings persist correctly
+
+### Fix #4: Connection Status
+- Green for connected, red only for real errors
+
+---
+
+## Files Modified
+
+| File | Changes |
+|------|---------|
+| `frontend/whiteboard.js` | Pan/zoom, brush size, bug fixes |
+| `frontend/app.js` | Connection error handling |
+| `frontend/index.html` | UI controls (+/-, zoom buttons) |
+| `frontend/style.css` | Display styling, [hidden] rule |
+
+---
+
 ## License
 
 MIT — see [LICENSE](LICENSE)

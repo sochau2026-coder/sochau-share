@@ -11,6 +11,14 @@ export const Whiteboard = (() => {
   let startX = 0, startY = 0;
   let lastX = 0, lastY = 0;
   let snapshot = null;
+  
+  // Pan & Zoom state
+  let panX = 0, panY = 0;
+  let zoomLevel = 1;
+  let isPanning = false;
+  let panStartX = 0, panStartY = 0;
+  const MIN_ZOOM = 0.1;  // Infinite zoom: zoom out to 10%
+  const MAX_ZOOM = 10;   // Infinite zoom: zoom in to 1000%
 
   const history = [];
   const MAX_HIST = 40;
@@ -56,17 +64,30 @@ export const Whiteboard = (() => {
 
     console.log(`[wb] resizing to ${cw}x${ch}`);
     const snapshot_data = canvas.width > 0 && canvas.height > 0 ? canvas.toDataURL() : null;
+    // Set canvas to display size for zooming/panning
     canvas.width = cw;
     canvas.height = ch;
     _resetCtx();
     if (snapshot_data) {
       const img = new Image();
-      img.onload = () => ctx.drawImage(img, 0, 0);
+      img.onload = () => _redraw(img);
       img.src = snapshot_data;
     }
   }
+  
+  function _redraw(img) {
+    ctx.save();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.translate(panX, panY);
+    ctx.scale(zoomLevel, zoomLevel);
+    ctx.drawImage(img, 0, 0, img.width / zoomLevel, img.height / zoomLevel);
+    ctx.restore();
+  }
 
   function _resetCtx() {
+    ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
+    ctx.translate(panX, panY);
+    ctx.scale(zoomLevel, zoomLevel);
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     ctx.globalCompositeOperation = 'source-over';
@@ -86,13 +107,63 @@ export const Whiteboard = (() => {
       });
     });
 
-    document.querySelectorAll('.wb-size[data-size]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.wb-size').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        brushSize = parseInt(btn.dataset.size);
+    // New size control with +/- buttons
+    const sizeDecBtn = document.getElementById('wb-size-dec');
+    const sizeIncBtn = document.getElementById('wb-size-inc');
+    const sizeDisplay = document.getElementById('wb-size-display');
+    
+    const updateSizeDisplay = () => {
+      if (sizeDisplay) sizeDisplay.textContent = brushSize;
+    };
+    
+    if (sizeDecBtn) {
+      sizeDecBtn.addEventListener('click', () => {
+        brushSize = Math.max(1, brushSize - 1);
+        updateSizeDisplay();
       });
-    });
+    }
+    
+    if (sizeIncBtn) {
+      sizeIncBtn.addEventListener('click', () => {
+        brushSize = Math.min(30, brushSize + 1);
+        updateSizeDisplay();
+      });
+    }
+    
+    updateSizeDisplay();
+
+    // Zoom controls
+    const zoomInBtn = document.getElementById('wb-zoom-in');
+    const zoomOutBtn = document.getElementById('wb-zoom-out');
+    const zoomDisplay = document.getElementById('wb-zoom-display');
+    
+    const updateZoomDisplay = () => {
+      if (zoomDisplay) zoomDisplay.textContent = Math.round(zoomLevel * 100) + '%';
+    };
+    
+    if (zoomInBtn) {
+      zoomInBtn.addEventListener('click', () => {
+        const oldZoom = zoomLevel;
+        zoomLevel = Math.min(MAX_ZOOM, zoomLevel * 1.2);  // 20% zoom increment (exponential)
+        if (zoomLevel !== oldZoom) {
+          _resetCtx();
+          updateZoomDisplay();
+        }
+      });
+    }
+    
+    if (zoomOutBtn) {
+      zoomOutBtn.addEventListener('click', () => {
+        const oldZoom = zoomLevel;
+        zoomLevel = Math.max(MIN_ZOOM, zoomLevel / 1.2);  // 20% zoom decrement (exponential)
+        if (zoomLevel !== oldZoom) {
+          _resetCtx();
+          updateZoomDisplay();
+        }
+      });
+    }
+    
+    updateZoomDisplay();
 
     document.querySelectorAll('.wb-color[data-color]').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -122,6 +193,9 @@ export const Whiteboard = (() => {
       const map = { p: 'pen', e: 'eraser', t: 'text', r: 'rect', c: 'circle' };
       if (map[e.key]) document.querySelector(`.wb-tool[data-tool="${map[e.key]}"]`)?.click();
       if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); _undo(); }
+      // Zoom with +/- keys
+      if (e.key === '=' || e.key === '+') { e.preventDefault(); zoomInBtn?.click(); }
+      if (e.key === '-' || e.key === '_') { e.preventDefault(); zoomOutBtn?.click(); }
     });
   }
 
@@ -132,21 +206,60 @@ export const Whiteboard = (() => {
     canvas.addEventListener('pointerup', _onUp);
     canvas.addEventListener('pointerleave', _onLeave);
     canvas.addEventListener('click', _onClick);
+    
+    // Pan with middle mouse button or spacebar+drag
+    canvas.addEventListener('pointerdown', (e) => {
+      if (e.button === 1 || (e.pointerType === 'mouse' && e.button === 2)) { // Middle or right click
+        isPanning = true;
+        const r = canvas.getBoundingClientRect();
+        panStartX = (e.clientX - r.left) - panX;
+        panStartY = (e.clientY - r.top) - panY;
+        e.preventDefault();
+      }
+    });
+    
+    canvas.addEventListener('pointermove', (e) => {
+      if (isPanning && e.buttons & 4) { // Middle button held
+        const r = canvas.getBoundingClientRect();
+        panX = (e.clientX - r.left) - panStartX;
+        panY = (e.clientY - r.top) - panStartY;
+        _resetCtx();
+      }
+    });
+    
+    canvas.addEventListener('pointerup', () => {
+      isPanning = false;
+    });
+    
+    // Zoom with mouse wheel
+    canvas.addEventListener('wheel', (e) => {
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? 1 / 1.2 : 1.2;  // 20% zoom increment (exponential)
+        zoomLevel = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoomLevel * delta));
+        _resetCtx();
+        const zoomDisplay = document.getElementById('wb-zoom-display');
+        if (zoomDisplay) zoomDisplay.textContent = Math.round(zoomLevel * 100) + '%';
+      }
+    }, { passive: false });
   }
 
   function _pos(e) {
     const r = canvas.getBoundingClientRect();
+    const screenX = (e.clientX - r.left) * (canvas.width / r.width);
+    const screenY = (e.clientY - r.top) * (canvas.height / r.height);
+    // Convert screen coords to canvas coords accounting for pan/zoom
     return {
-      x: (e.clientX - r.left) * (canvas.width / r.width),
-      y: (e.clientY - r.top) * (canvas.height / r.height),
+      x: (screenX - panX) / zoomLevel,
+      y: (screenY - panY) / zoomLevel,
     };
   }
 
   function _onDown(e) {
-    if (tool === 'text') return;
+    if (isPanning || tool === 'text') return;
     if (canvas.width === 0 || canvas.height === 0) {
       console.warn('[wb] skip drawing: canvas is 0x0');
-      resize(); // try one last time
+      resize();
       if (canvas.width === 0) return;
     }
     const { x, y } = _pos(e);
@@ -156,14 +269,16 @@ export const Whiteboard = (() => {
     _pushHistory();
     if (tool === 'pen' || tool === 'eraser') {
       _applyPenCtx();
-      // We draw discrete segments in _onMove, so we don't need a persistent path here.
-      // But we call beginPath/moveTo to set the starting point.
       ctx.beginPath();
       ctx.moveTo(x, y);
-      ctx.stroke(); // Draw a single point
+      ctx.stroke();
     } else {
       try {
+        // Save image data without transform
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        ctx.restore();
       } catch (err) {
         console.error('[wb] getImageData failed:', err);
         snapshot = null;
@@ -174,13 +289,14 @@ export const Whiteboard = (() => {
   function _onMove(e) {
     const { x, y } = _pos(e);
     if (canvas.width === 0 || canvas.height === 0) return;
-    // Always broadcast cursor
-    _broadcast({ type: 'cursor', x: x / canvas.width, y: y / canvas.height });
-    if (!drawing) return;
+    // Broadcast cursor as canvas coordinates relative to view
+    const screenX = x * zoomLevel + panX;
+    const screenY = y * zoomLevel + panY;
+    _broadcast({ type: 'cursor', x: screenX / canvas.width, y: screenY / canvas.height });
+    if (!drawing || isPanning) return;
 
     if (tool === 'pen' || tool === 'eraser') {
       _applyPenCtx();
-      // Discrete segment drawing: prevents path contamination from remote peers
       ctx.beginPath();
       ctx.moveTo(lastX, lastY);
       ctx.lineTo(x, y);
@@ -190,14 +306,20 @@ export const Whiteboard = (() => {
         tool,
         color,
         size: brushSize,
-        fromX: lastX / canvas.width,
-        fromY: lastY / canvas.height,
-        toX: x / canvas.width,
-        toY: y / canvas.height,
+        fromX: lastX,
+        fromY: lastY,
+        toX: x,
+        toY: y,
+        zoom: zoomLevel,
       });
       lastX = x; lastY = y;
     } else if (snapshot) {
+      ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.putImageData(snapshot, 0, 0);
+      ctx.restore();
+      ctx.translate(panX, panY);
+      ctx.scale(zoomLevel, zoomLevel);
       _drawShape(tool, startX, startY, x, y, color, brushSize);
     }
   }
@@ -218,8 +340,11 @@ export const Whiteboard = (() => {
       const { x, y } = _pos(e);
       _broadcast({
         type: 'shape', tool, color, size: brushSize,
-        x1: startX / canvas.width, y1: startY / canvas.height,
-        x2: x / canvas.width, y2: y / canvas.height,
+        x1: startX,
+        y1: startY,
+        x2: x,
+        y2: y,
+        zoom: zoomLevel,
       });
       snapshot = null;
     }
@@ -238,11 +363,11 @@ export const Whiteboard = (() => {
     if (tool === 'eraser') {
       ctx.globalCompositeOperation = 'destination-out';
       ctx.strokeStyle = 'rgba(0,0,0,1)';
-      ctx.lineWidth = brushSize * 4;
+      ctx.lineWidth = brushSize * 4 / zoomLevel;
     } else {
       ctx.globalCompositeOperation = 'source-over';
       ctx.strokeStyle = color;
-      ctx.lineWidth = brushSize;
+      ctx.lineWidth = brushSize / zoomLevel;
     }
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
@@ -272,7 +397,10 @@ export const Whiteboard = (() => {
   }
 
   function _clear() {
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
   }
 
   // ── Text input ────────────────────────────────────────────
@@ -313,13 +441,19 @@ export const Whiteboard = (() => {
   // ── History / Undo ────────────────────────────────────────
   function _pushHistory() {
     if (!canvas.width || !canvas.height) return;
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     history.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+    ctx.restore();
     if (history.length > MAX_HIST) history.shift();
   }
 
   function _undo() {
     if (!history.length) return;
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.putImageData(history.pop(), 0, 0);
+    ctx.restore();
     _broadcast({ type: 'undo-snapshot', data: canvas.toDataURL() });
   }
 
@@ -351,8 +485,9 @@ export const Whiteboard = (() => {
     const p = peers.get(peerId);
     if (!p || !wrap) return;
     p.dot.style.display = 'block';
-    p.dot.style.left = (nx * wrap.clientWidth) + 'px';
-    p.dot.style.top = (ny * wrap.clientHeight) + 'px';
+    // nx, ny are normalized canvas coordinates (0-1 range)
+    p.dot.style.left = (nx * canvas.width) + 'px';
+    p.dot.style.top = (ny * canvas.height) + 'px';
   }
 
   // ── Handle incoming peer messages ─────────────────────────
@@ -371,18 +506,19 @@ export const Whiteboard = (() => {
         break;
 
       case 'draw': {
-        // Save ctx so remote draw does NOT clobber local drawing state
         ctx.save();
-        const x1 = msg.fromX * canvas.width, y1 = msg.fromY * canvas.height;
-        const x2 = msg.toX * canvas.width, y2 = msg.toY * canvas.height;
+        const x1 = msg.fromX, y1 = msg.fromY;
+        const x2 = msg.toX, y2 = msg.toY;
+        ctx.translate(panX, panY);
+        ctx.scale(msg.zoom || 1, msg.zoom || 1);
         if (msg.tool === 'eraser') {
           ctx.globalCompositeOperation = 'destination-out';
           ctx.strokeStyle = 'rgba(0,0,0,1)';
-          ctx.lineWidth = msg.size * 4;
+          ctx.lineWidth = msg.size * 4 / (msg.zoom || 1);
         } else {
           ctx.globalCompositeOperation = 'source-over';
           ctx.strokeStyle = msg.color;
-          ctx.lineWidth = msg.size;
+          ctx.lineWidth = msg.size / (msg.zoom || 1);
         }
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
@@ -390,24 +526,25 @@ export const Whiteboard = (() => {
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
         ctx.stroke();
-        ctx.restore(); // Restore local user's drawing state
+        ctx.restore();
         break;
       }
 
       case 'shape':
         ctx.save();
+        ctx.translate(panX, panY);
+        ctx.scale(msg.zoom || 1, msg.zoom || 1);
         _drawShape(msg.tool,
-          msg.x1 * canvas.width, msg.y1 * canvas.height,
-          msg.x2 * canvas.width, msg.y2 * canvas.height,
+          msg.x1, msg.y1, msg.x2, msg.y2,
           msg.color, msg.size);
         ctx.restore();
         break;
 
       case 'text':
         ctx.save();
-        _drawText(msg.text,
-          msg.x * canvas.width, msg.y * canvas.height,
-          msg.color, msg.fontSize);
+        ctx.translate(panX, panY);
+        ctx.scale(msg.zoom || 1, msg.zoom || 1);
+        _drawText(msg.text, msg.x, msg.y, msg.color, msg.fontSize);
         ctx.restore();
         break;
 

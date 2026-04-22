@@ -350,6 +350,8 @@ const Mesh = {
       n >= needed ? 'connected' : 'connecting',
       n >= needed ? `${State.capacity} peers connected` : `${n} / ${needed} peers`
     );
+    // Clear error when peers connect successfully
+    if (n > 0) DashUI.hideError();
     FilesUI.setSendEnabled(State.outQueue.length > 0 && n > 0);
   },
 
@@ -382,7 +384,10 @@ const Mesh = {
     const n = State.openPeerIds.length;
     DashUI.updatePeers();
     DashUI.setConn(n > 0 ? 'connected' : 'waiting', n > 0 ? `${n} peer(s)` : 'Waiting for peers…');
-    DashUI.showError(`A peer disconnected. ${n} remaining.`);
+    // Only show error if we had a connected peer (actual disconnection)
+    if (n === 0 && State.capacity > 2) {
+      DashUI.showError(`A peer disconnected. Waiting for peers…`);
+    }
   },
 };
 
@@ -613,7 +618,40 @@ const App = {
       });
     });
     document.getElementById('dash-error-close')?.addEventListener('click', () => DashUI.hideError());
-  },
+    
+    // Invite modal handlers
+    const inviteModal = document.getElementById('invite-modal');
+    const inviteModalCode = document.getElementById('invite-modal-code');
+    const inviteModalCopy = document.getElementById('invite-modal-copy');
+    const inviteModalClose = document.getElementById('invite-modal-close');
+    const inviteModalBtnClose = document.getElementById('invite-modal-btn-close');
+    const wbInviteBtn = document.getElementById('wb-invite-btn');
+    const filesInviteBtn = document.getElementById('files-invite-btn');
+    
+    const showInviteModal = () => {
+      inviteModalCode.textContent = State.roomId || 'ROOM-CODE';
+      inviteModal.hidden = false;
+    };
+    
+    const hideInviteModal = () => {
+      inviteModal.hidden = true;
+    };
+    
+    wbInviteBtn?.addEventListener('click', showInviteModal);
+    filesInviteBtn?.addEventListener('click', showInviteModal);
+    inviteModalClose?.addEventListener('click', hideInviteModal);
+    inviteModalBtnClose?.addEventListener('click', hideInviteModal);
+    inviteModal?.addEventListener('click', (e) => {
+      if (e.target === inviteModal) hideInviteModal();
+    });
+    
+    inviteModalCopy?.addEventListener('click', () => {
+      navigator.clipboard.writeText(State.roomId || '').then(() => {
+        const btn = inviteModalCopy;
+        btn.style.color = 'var(--green)';
+        setTimeout(() => btn.style.color = '', 2000);
+      });
+    });
 
   _wireFiles() {
     const dz = document.getElementById('dropzone');

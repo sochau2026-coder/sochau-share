@@ -3,3 +3,4 @@ backend/.env
 certs/
 *.log
 .DS_Store
+test-local.sh
